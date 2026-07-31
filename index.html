@@ -1,1266 +1,1049 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Senior Citizen Government Schemes — Data Collection &amp; Analysis</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Senior Citizen Schemes — Data Collection &amp; Analysis</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <style>
   :root{
-    --ink:#14293D;
-    --ink-soft:#3B5165;
-    --paper:#F6F3EC;
-    --paper-raised:#FFFFFF;
-    --line:#E1DBCC;
-    --teal:#0F7A6C;
-    --teal-bg:#E7F5F2;
-    --marigold:#C98A1F;
-    --marigold-bg:#FBF1DE;
-    --blue:#2A5C8A;
-    --blue-bg:#EAF1F8;
-    --red:#B23B2E;
-    --red-bg:#FBEAE8;
-    --gray:#767C86;
-    --gray-bg:#EEEFF1;
-    --shadow: 0 1px 2px rgba(20,41,61,0.06), 0 6px 20px rgba(20,41,61,0.06);
+    --navy-900:#0f172a;
+    --navy-800:#1e293b;
+    --navy-700:#2c3e56;
+    --paper:#faf8f4;
+    --paper-dim:#f0ede5;
+    --ink:#1c1e21;
+    --ink-dim:#5b6270;
+    --line:#e2ddd1;
+    --saffron:#e8a33d;
+    --saffron-dark:#c9821f;
+    --blue:#2563eb;
+    --blue-bg:#eaf1ff;
+    --green:#15803d;
+    --green-bg:#e8f7ee;
+    --orange:#c2660c;
+    --orange-bg:#fdf1e2;
+    --red:#b91c1c;
+    --red-bg:#fdecec;
+    --gray:#57606f;
+    --gray-bg:#eceef1;
   }
   *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
   body{
-    margin:0;
-    font-family:'Inter',sans-serif;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     background:var(--paper);
     color:var(--ink);
     -webkit-font-smoothing:antialiased;
   }
-  h1,h2,h3,.serif{font-family:'Lora',serif;}
-  .mono{font-family:'IBM Plex Mono',monospace;}
-  a{color:inherit;}
-  .view{display:none;}
-  .view.active{display:block;}
-  .container{max-width:1180px;margin:0 auto;padding:0 24px;}
+  .mono{font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;}
+  #root{min-height:100vh;display:flex;flex-direction:column;}
 
-  /* Ripple motif */
-  .ripple-field{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
-  .ripple{position:absolute;border-radius:50%;border:1px solid rgba(255,255,255,0.14);}
+  /* Header */
+  .app-header{
+    background:linear-gradient(135deg,var(--navy-900),var(--navy-800));
+    color:#fff;
+    padding:22px 24px;
+    box-shadow:0 2px 14px rgba(15,23,42,.25);
+    position:sticky;top:0;z-index:20;
+  }
+  .app-header-inner{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand-badge{
+    width:40px;height:40px;border-radius:8px;background:var(--saffron);
+    display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--navy-900);
+    font-size:15px;letter-spacing:.5px;flex-shrink:0;
+  }
+  .brand-title{font-size:16px;font-weight:700;line-height:1.25;}
+  .brand-sub{font-size:11.5px;color:#b9c2d6;letter-spacing:.4px;text-transform:uppercase;margin-top:2px;}
+  .nav-tabs{display:flex;gap:4px;flex-wrap:wrap;}
+  .nav-tab{
+    background:transparent;border:1px solid rgba(255,255,255,.16);color:#d7dce6;
+    padding:8px 13px;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer;
+    transition:all .15s ease;white-space:nowrap;
+  }
+  .nav-tab:hover{background:rgba(255,255,255,.08);color:#fff;}
+  .nav-tab.active{background:var(--saffron);border-color:var(--saffron);color:var(--navy-900);}
 
-  header.hero{
-    position:relative;
-    background:linear-gradient(160deg,#0E2035 0%,#14293D 55%,#1C3A54 100%);
-    color:#F3F0E6;
-    padding:56px 0 64px;
-    overflow:hidden;
-  }
-  header.hero .eyebrow{
-    font-family:'IBM Plex Mono',monospace;
-    letter-spacing:0.14em;
-    text-transform:uppercase;
-    font-size:12px;
-    color:#9FC1D6;
-    margin-bottom:14px;
-  }
-  header.hero h1{
-    font-size:clamp(28px,4vw,42px);
-    line-height:1.15;
-    margin:0 0 14px;
-    max-width:820px;
-    font-weight:600;
-  }
-  header.hero p.sub{
-    max-width:600px;
-    color:#C7D3DD;
-    font-size:15.5px;
-    line-height:1.6;
-    margin:0;
-  }
-  .top-bar{
-    display:flex;align-items:center;justify-content:space-between;
-    padding-bottom:36px;position:relative;z-index:2;
-  }
-  .brand{display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.04em;color:#C7D3DD;}
-  .brand-mark{width:26px;height:26px;position:relative;flex:none;}
+  main{flex:1;max-width:1180px;width:100%;margin:0 auto;padding:28px 24px 60px;}
 
-  nav.tabs{
-    display:flex;gap:6px;flex-wrap:wrap;position:relative;z-index:2;
+  /* Home */
+  .hero{text-align:center;padding:38px 10px 34px;}
+  .hero-eyebrow{
+    display:inline-block;font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;
+    color:var(--saffron-dark);font-weight:700;margin-bottom:10px;
   }
-  nav.tabs button{
-    background:rgba(255,255,255,0.08);
-    border:1px solid rgba(255,255,255,0.18);
-    color:#EDEBE1;
-    font-family:'Inter',sans-serif;
-    font-size:13.5px;
-    font-weight:500;
-    padding:8px 14px;
-    border-radius:100px;
-    cursor:pointer;
-    transition:background .15s ease, transform .1s ease;
+  .hero h1{font-size:clamp(24px,4vw,36px);margin:0 0 12px;line-height:1.2;color:var(--navy-900);}
+  .hero p{color:var(--ink-dim);max-width:640px;margin:0 auto;font-size:15px;line-height:1.6;}
+
+  .home-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;margin-top:32px;}
+  .home-card{
+    border-radius:14px;padding:22px;cursor:pointer;border:1px solid var(--line);
+    background:#fff;transition:transform .15s ease,box-shadow .15s ease;text-align:left;
+    display:flex;flex-direction:column;gap:8px;
   }
-  nav.tabs button:hover{background:rgba(255,255,255,0.16);}
-  nav.tabs button.current{background:#F3F0E6;color:var(--ink);border-color:#F3F0E6;}
-
-  main{padding:40px 0 80px;}
-
-  .card{
-    background:var(--paper-raised);
-    border:1px solid var(--line);
-    border-radius:14px;
-    box-shadow:var(--shadow);
+  .home-card:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(15,23,42,.12);}
+  .home-card .icon-tab{
+    width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:13px;color:#fff;
   }
+  .home-card h3{margin:6px 0 2px;font-size:16px;color:var(--navy-900);}
+  .home-card p{margin:0;font-size:13px;color:var(--ink-dim);line-height:1.5;}
+  .tab-blue{background:var(--blue);}
+  .tab-purple{background:#7c3aed;}
+  .tab-orange{background:var(--orange);}
+  .tab-red{background:var(--red);}
+  .tab-navy{background:var(--navy-800);}
 
-  /* Home nav cards */
-  .nav-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:-40px;position:relative;z-index:3;}
-  .nav-card{
-    padding:26px 22px;
-    cursor:pointer;
-    transition:transform .15s ease, box-shadow .15s ease;
-    border-top:3px solid var(--accent,var(--blue));
-  }
-  .nav-card:hover{transform:translateY(-3px);box-shadow:0 4px 6px rgba(20,41,61,0.08),0 14px 30px rgba(20,41,61,0.12);}
-  .nav-card .idx{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-soft);opacity:.7;}
-  .nav-card h3{margin:8px 0 8px;font-size:19px;}
-  .nav-card p{margin:0;font-size:13.5px;color:var(--ink-soft);line-height:1.55;}
+  .home-stats{display:flex;gap:14px;justify-content:center;margin-top:30px;flex-wrap:wrap;}
+  .home-stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 22px;text-align:center;min-width:120px;}
+  .home-stat .num{font-size:22px;font-weight:800;color:var(--navy-900);}
+  .home-stat .lbl{font-size:11px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
 
-  section.block{padding:56px 0;}
-  section.block.tight{padding:28px 0;}
-  .section-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:22px;flex-wrap:wrap;}
-  .section-head h2{font-size:24px;margin:0;}
-  .section-head .desc{font-size:13.5px;color:var(--ink-soft);max-width:480px;}
+  /* Cards / panels */
+  .panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px;margin-bottom:20px;}
+  .panel-title{font-size:17px;font-weight:700;color:var(--navy-900);margin:0 0 4px;}
+  .panel-sub{font-size:12.5px;color:var(--ink-dim);margin:0 0 18px;}
 
-  /* Buttons */
-  .btn{
-    display:inline-flex;align-items:center;justify-content:center;gap:8px;
-    font-family:'Inter',sans-serif;font-weight:600;font-size:14px;
-    padding:10px 20px;border-radius:9px;border:1px solid transparent;
-    cursor:pointer;transition:filter .12s ease, transform .06s ease;
-  }
-  .btn:active{transform:translateY(1px);}
-  .btn-primary{background:var(--ink);color:#F6F3EC;}
-  .btn-primary:hover{filter:brightness(1.15);}
-  .btn-teal{background:var(--teal);color:white;}
-  .btn-teal:hover{filter:brightness(1.08);}
-  .btn-outline{background:transparent;border-color:var(--line);color:var(--ink);}
-  .btn-outline:hover{background:#EFEBDC;}
-  .btn-danger{background:var(--red);color:white;}
-  .btn-danger:hover{filter:brightness(1.1);}
-  .btn-ghost{background:transparent;color:var(--ink-soft);border:none;text-decoration:underline;padding:6px 4px;}
-  .btn[disabled]{opacity:.45;cursor:not-allowed;}
-  .btn-sm{padding:6px 12px;font-size:12.5px;border-radius:7px;}
-
-  /* Forms */
-  label.field-label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--ink);}
-  input.input, select.input{
-    width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;
-    font-family:'Inter',sans-serif;font-size:14px;background:#FDFCF9;color:var(--ink);
-  }
-  input.input:focus, select.input:focus{outline:2px solid var(--blue);outline-offset:1px;border-color:var(--blue);}
   .field{margin-bottom:16px;}
-  .field .err{color:var(--red);font-size:12px;margin-top:4px;display:none;}
-  .field.invalid .err{display:block;}
-  .field.invalid input.input{border-color:var(--red);}
-  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-  @media (max-width:640px){.grid-2{grid-template-columns:1fr;}}
-
-  /* Scheme enrollment card */
-  .scheme-card{padding:18px 20px;margin-bottom:12px;}
-  .scheme-card .scheme-title{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
-  .scheme-card .scheme-title h4{margin:0;font-size:15.5px;font-family:'Lora',serif;font-weight:600;}
-  .scheme-card .scheme-abbr{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-soft);background:var(--gray-bg);padding:2px 7px;border-radius:5px;}
-  .scheme-card .scheme-note{font-size:12px;color:var(--marigold);font-style:italic;}
-  .status-options{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
-  @media (max-width:900px){.status-options{grid-template-columns:repeat(2,1fr);}}
-  .status-opt{
-    position:relative;border:1.5px solid var(--line);border-radius:9px;padding:9px 10px;
-    cursor:pointer;font-size:12px;font-weight:500;text-align:center;line-height:1.35;
-    transition:border-color .12s ease, background .12s ease;color:var(--ink-soft);
+  .field label{display:block;font-size:12.5px;font-weight:600;color:var(--navy-800);margin-bottom:5px;}
+  .field input,.field select{
+    width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--line);
+    font-size:14px;background:var(--paper-dim);color:var(--ink);
   }
-  .status-opt input{position:absolute;opacity:0;pointer-events:none;}
-  .status-opt.sel-enrolled_through_awareness.selected{border-color:var(--blue);background:var(--blue-bg);color:var(--blue);}
-  .status-opt.sel-already_enrolled.selected{border-color:var(--teal);background:var(--teal-bg);color:var(--teal);}
-  .status-opt.sel-interested_through_awareness.selected{border-color:var(--marigold);background:var(--marigold-bg);color:var(--marigold);}
-  .status-opt.sel-not_interested.selected{border-color:var(--red);background:var(--red-bg);color:var(--red);}
-  .status-opt.sel-not_applicable.selected{border-color:var(--gray);background:var(--gray-bg);color:var(--gray);}
-  .scheme-card.incomplete{border-color:#E4B3AC;}
+  .field input:focus,.field select:focus{outline:2px solid var(--saffron);outline-offset:1px;background:#fff;}
+  .field .err{color:var(--red);font-size:11.5px;margin-top:4px;}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media (max-width:560px){.field-row{grid-template-columns:1fr;}}
 
-  /* Stat cards */
-  .stat-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;}
-  @media (max-width:1000px){.stat-grid{grid-template-columns:repeat(3,1fr);}}
-  @media (max-width:560px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
-  .stat-card{padding:16px 16px 14px;position:relative;overflow:hidden;}
-  .stat-card .stat-num{font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:600;}
-  .stat-card .stat-label{font-size:11.5px;color:var(--ink-soft);margin-top:4px;line-height:1.3;}
-  .stat-card .ring{position:absolute;right:-16px;bottom:-16px;width:64px;height:64px;border-radius:50%;border:6px solid var(--accent,var(--ink));opacity:.08;}
-
-  table.data-table{width:100%;border-collapse:collapse;font-size:13px;}
-  table.data-table th{
-    text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;
-    color:var(--ink-soft);font-weight:600;padding:10px 12px;border-bottom:1px solid var(--line);
-    white-space:nowrap;
+  .btn{
+    border:none;border-radius:8px;padding:11px 18px;font-size:13.5px;font-weight:700;
+    cursor:pointer;transition:filter .15s ease,transform .1s ease;
   }
-  table.data-table td{padding:10px 12px;border-bottom:1px solid #EFEAD e;border-bottom:1px solid #EFEADE;vertical-align:top;}
-  table.data-table tbody tr:hover{background:#FBF9F3;}
-  .pill{display:inline-block;padding:3px 9px;border-radius:100px;font-size:11px;font-weight:600;white-space:nowrap;}
-  .pill-enrolled_through_awareness{background:var(--blue-bg);color:var(--blue);}
-  .pill-already_enrolled{background:var(--teal-bg);color:var(--teal);}
-  .pill-interested_through_awareness{background:var(--marigold-bg);color:var(--marigold);}
-  .pill-not_interested{background:var(--red-bg);color:var(--red);}
-  .pill-not_applicable{background:var(--gray-bg);color:var(--gray);}
+  .btn:active{transform:scale(.98);}
+  .btn-primary{background:var(--navy-900);color:#fff;}
+  .btn-primary:hover{filter:brightness(1.2);}
+  .btn-saffron{background:var(--saffron);color:var(--navy-900);}
+  .btn-saffron:hover{filter:brightness(1.06);}
+  .btn-outline{background:#fff;border:1px solid var(--line);color:var(--navy-800);}
+  .btn-outline:hover{background:var(--paper-dim);}
+  .btn-danger{background:var(--red);color:#fff;}
+  .btn-danger:hover{filter:brightness(1.1);}
+  .btn-sm{padding:6px 11px;font-size:12px;border-radius:6px;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
 
-  .bar-cell{display:flex;flex-direction:column;gap:3px;min-width:110px;}
-  .bar-track{background:#EFEADE;border-radius:5px;height:6px;overflow:hidden;}
-  .bar-fill{height:100%;border-radius:5px;}
+  /* Scheme ledger rows (step 2 form) */
+  .scheme-row{border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px;background:var(--paper-dim);}
+  .scheme-row-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
+  .scheme-idx{
+    width:28px;height:28px;border-radius:50%;background:var(--navy-900);color:var(--saffron);
+    display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;
+  }
+  .scheme-name{font-weight:700;font-size:14px;color:var(--navy-900);}
+  .scheme-note{font-size:11.5px;color:var(--ink-dim);margin-top:2px;}
+  .option-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;}
+  .opt-btn{
+    border:1.5px solid var(--line);background:#fff;border-radius:8px;padding:9px 10px;
+    font-size:12.5px;font-weight:600;cursor:pointer;text-align:left;color:var(--ink-dim);
+    transition:all .12s ease;
+  }
+  .opt-btn:hover{border-color:var(--saffron);}
+  .opt-btn.sel-enrolled_through_awareness.selected{background:var(--blue-bg);border-color:var(--blue);color:var(--blue);}
+  .opt-btn.sel-already_enrolled.selected{background:var(--green-bg);border-color:var(--green);color:var(--green);}
+  .opt-btn.sel-interested_through_awareness.selected{background:var(--orange-bg);border-color:var(--orange);color:var(--orange);}
+  .opt-btn.sel-not_interested.selected{background:var(--red-bg);border-color:var(--red);color:var(--red);}
+  .opt-btn.sel-not_applicable.selected{background:var(--gray-bg);border-color:var(--gray);color:var(--gray);}
 
-  .toast-wrap{position:fixed;top:20px;right:20px;z-index:999;display:flex;flex-direction:column;gap:8px;}
-  .toast{background:var(--ink);color:#F6F3EC;padding:12px 18px;border-radius:9px;font-size:13.5px;box-shadow:var(--shadow);
-    display:flex;align-items:center;gap:8px;animation:slidein .18s ease;}
-  .toast.err{background:var(--red);}
-  @keyframes slidein{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+  .steps{display:flex;gap:8px;align-items:center;margin-bottom:22px;}
+  .step-pill{
+    padding:6px 13px;border-radius:20px;font-size:12px;font-weight:700;background:var(--paper-dim);
+    color:var(--ink-dim);border:1px solid var(--line);
+  }
+  .step-pill.active{background:var(--navy-900);color:#fff;border-color:var(--navy-900);}
+  .step-arrow{color:var(--ink-dim);font-size:12px;}
 
-  .modal-backdrop{position:fixed;inset:0;background:rgba(20,41,61,0.5);display:flex;align-items:center;justify-content:center;z-index:998;padding:20px;}
-  .modal{background:var(--paper-raised);border-radius:14px;max-width:460px;width:100%;padding:26px;box-shadow:var(--shadow);}
-  .modal h3{margin:0 0 10px;}
-  .modal p{font-size:13.5px;color:var(--ink-soft);line-height:1.6;}
-  .modal input.input{margin-top:10px;}
-  .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;}
+  /* Summary cards */
+  .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:22px;}
+  .summary-card{border-radius:12px;padding:16px;border:1px solid var(--line);background:#fff;}
+  .summary-card .num{font-size:24px;font-weight:800;}
+  .summary-card .lbl{font-size:11.5px;color:var(--ink-dim);margin-top:3px;font-weight:600;}
+  .sc-total .num{color:var(--navy-900);}
+  .sc-enrolled_through_awareness .num{color:var(--blue);}
+  .sc-already_enrolled .num{color:var(--green);}
+  .sc-interested_through_awareness .num{color:var(--orange);}
+  .sc-not_interested .num{color:var(--red);}
+  .sc-not_applicable .num{color:var(--gray);}
 
-  .progress-steps{display:flex;gap:8px;margin-bottom:28px;}
-  .progress-steps .step{flex:1;height:5px;border-radius:3px;background:var(--line);}
-  .progress-steps .step.done{background:var(--teal);}
-  .progress-steps .step.current{background:var(--marigold);}
+  table{width:100%;border-collapse:collapse;font-size:12.8px;}
+  th{text-align:left;padding:9px 10px;background:var(--navy-900);color:#fff;font-size:11px;text-transform:uppercase;letter-spacing:.4px;position:sticky;top:0;}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;}
+  tr:hover td{background:var(--paper-dim);}
+  .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;}
+  .cell-stat{display:flex;flex-direction:column;gap:3px;}
+  .bar-track{height:5px;background:var(--paper-dim);border-radius:3px;overflow:hidden;}
+  .bar-fill{height:100%;border-radius:3px;}
 
-  .empty-state{padding:48px 24px;text-align:center;color:var(--ink-soft);}
-  .empty-state .ripple-icon{margin:0 auto 14px;}
+  .badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+  .badge-enrolled_through_awareness{background:var(--blue-bg);color:var(--blue);}
+  .badge-already_enrolled{background:var(--green-bg);color:var(--green);}
+  .badge-interested_through_awareness{background:var(--orange-bg);color:var(--orange);}
+  .badge-not_interested{background:var(--red-bg);color:var(--red);}
+  .badge-not_applicable{background:var(--gray-bg);color:var(--gray);}
 
-  .search-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
-  .search-bar input.input{max-width:280px;}
+  .search-bar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+  .search-bar input{flex:1;min-width:200px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:var(--paper-dim);}
+
+  .expand-row td{background:var(--paper-dim);}
+  .exp-schemes{display:flex;flex-wrap:wrap;gap:6px;}
+
+  .toast{
+    position:fixed;bottom:22px;right:22px;background:var(--navy-900);color:#fff;padding:13px 18px;
+    border-radius:10px;font-size:13px;font-weight:600;box-shadow:0 8px 26px rgba(0,0,0,.3);
+    z-index:100;display:flex;align-items:center;gap:10px;animation:toastin .2s ease;
+  }
+  .toast.error{background:var(--red);}
+  @keyframes toastin{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+  .empty-state{text-align:center;padding:44px 20px;color:var(--ink-dim);}
+  .empty-state .glyph{font-size:30px;margin-bottom:10px;}
 
   .checkbox-row{display:flex;align-items:center;gap:8px;}
   .checkbox-row input{width:16px;height:16px;}
 
-  .expand-row td{background:#FBF9F3;padding:0;}
-  .expand-inner{padding:14px 20px;}
-  .mini-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;}
-  .mini-item{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;background:white;border:1px solid var(--line);padding:7px 10px;border-radius:7px;}
+  .confirm-overlay{
+    position:fixed;inset:0;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;
+    z-index:200;padding:20px;
+  }
+  .confirm-box{background:#fff;border-radius:14px;padding:24px;max-width:400px;width:100%;}
+  .confirm-box h3{margin:0 0 10px;color:var(--navy-900);}
+  .confirm-box p{font-size:13.5px;color:var(--ink-dim);line-height:1.5;margin:0 0 16px;}
+  .confirm-box input{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:8px;margin-bottom:14px;font-size:14px;}
+  .confirm-actions{display:flex;gap:10px;justify-content:flex-end;}
 
-  .kpi-row{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:22px;}
-  .kpi{padding:14px 0;}
-  .kpi .n{font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:600;}
-  .kpi .l{font-size:12px;color:var(--ink-soft);}
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;border:1.5px solid var(--line);font-size:12.5px;font-weight:600;cursor:pointer;background:#fff;color:var(--ink-dim);}
+  .chip.on{background:var(--navy-900);color:#fff;border-color:var(--navy-900);}
 
-  footer{padding:30px 0 60px;text-align:center;font-size:12px;color:var(--ink-soft);}
+  .pagination{display:flex;gap:6px;align-items:center;justify-content:center;margin-top:14px;}
 
-  .badge-note{background:var(--marigold-bg);color:var(--marigold);font-size:11px;padding:2px 8px;border-radius:100px;font-weight:600;}
+  footer.app-footer{text-align:center;padding:18px;color:var(--ink-dim);font-size:11.5px;border-top:1px solid var(--line);}
 
-  select.input{appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0l5 6 5-6z' fill='%23767C86'/></svg>");background-repeat:no-repeat;background-position:right 12px center;padding-right:30px;}
-
-  ::selection{background:var(--marigold);color:white;}
-
-  .chart-wrap{position:relative;height:300px;}
-  .two-col-charts{display:grid;grid-template-columns:1.4fr 1fr;gap:20px;}
-  @media (max-width:900px){.two-col-charts{grid-template-columns:1fr;}}
+  .flex-between{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  .section-gap{margin-top:26px;}
+  textarea{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-family:inherit;resize:vertical;background:var(--paper-dim);}
+  .fu-card{border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px;background:#fff;}
 </style>
 </head>
 <body>
-
-<div class="toast-wrap" id="toastWrap"></div>
-<div id="modalRoot"></div>
-
-<header class="hero">
-  <div class="ripple-field" id="rippleField"></div>
-  <div class="container">
-    <div class="top-bar">
-      <div class="brand">
-        <svg class="brand-mark" viewBox="0 0 26 26"><circle cx="13" cy="13" r="3" fill="#E2A63B"/><circle cx="13" cy="13" r="7" fill="none" stroke="#9FC1D6" stroke-width="1.1" opacity="0.8"/><circle cx="13" cy="13" r="11.5" fill="none" stroke="#9FC1D6" stroke-width="1" opacity="0.4"/></svg>
-        SENIOR CITIZEN SCHEMES · FIELD PLATFORM
-      </div>
-      <nav class="tabs" id="tabNav">
-        <button data-view="home">Home</button>
-        <button data-view="collect">Collect Data</button>
-        <button data-view="analytics">Analysis</button>
-        <button data-view="followups">Follow-ups</button>
-        <button data-view="campaign">Awareness Campaign</button>
-        <button data-view="manage">Manage Data</button>
-      </nav>
-    </div>
-    <div class="eyebrow">GOVERNMENT OF INDIA · SCHEMES FOR THE ELDERLY</div>
-    <h1>Senior Citizen Government Schemes — Data Collection &amp; Analysis Platform</h1>
-    <p class="sub">Record every conversation your team has in the field, watch awareness spread scheme by scheme, and follow up until interest turns into enrolment.</p>
-  </div>
-</header>
-
-<main>
-  <div class="container">
-
-    <!-- HOME -->
-    <div class="view" id="view-home">
-      <div class="nav-grid">
-        <div class="nav-card card" data-goto="collect" style="--accent:var(--blue)">
-          <div class="idx">01 / SURVEY</div>
-          <h3>Collect Data</h3>
-          <p>Register a beneficiary, then record their status across all 13 schemes in one guided form.</p>
-        </div>
-        <div class="nav-card card" data-goto="analytics" style="--accent:var(--marigold)">
-          <div class="idx">02 / MEASURE</div>
-          <h3>View Analysis</h3>
-          <p>Scheme-wise breakdowns, charts, the full beneficiary list, and one-click CSV export.</p>
-        </div>
-        <div class="nav-card card" data-goto="followups" style="--accent:var(--teal)">
-          <div class="idx">03 / FOLLOW UP</div>
-          <h3>Follow-ups</h3>
-          <p>Everyone who showed interest but hasn't enrolled yet — track outreach until it's resolved.</p>
-        </div>
-        <div class="nav-card card" data-goto="campaign" style="--accent:var(--blue)">
-          <div class="idx">04 / CAMPAIGN</div>
-          <h3>Awareness Campaign</h3>
-          <p>Pick the scheme you're currently running awareness for and track just that scheme's progress.</p>
-        </div>
-        <div class="nav-card card" data-goto="manage" style="--accent:var(--red)">
-          <div class="idx">05 / MANAGE</div>
-          <h3>Manage Data</h3>
-          <p>Review, delete individual records, or reset the entire dataset with a safety confirmation.</p>
-        </div>
-      </div>
-
-      <section class="block">
-        <div class="section-head">
-          <h2>At a glance</h2>
-          <div class="desc">A quick pulse on data collected so far.</div>
-        </div>
-        <div class="kpi-row" id="homeKpis"></div>
-      </section>
-    </div>
-
-    <!-- COLLECT -->
-    <div class="view" id="view-collect">
-      <section class="block tight">
-        <div class="progress-steps">
-          <div class="step" id="pstep1"></div>
-          <div class="step" id="pstep2"></div>
-        </div>
-
-        <!-- Step 1 -->
-        <div id="collectStep1">
-          <div class="section-head">
-            <h2>Beneficiary Details</h2>
-            <div class="desc">Step 1 of 2 — basic details of the person you're speaking with.</div>
-          </div>
-          <div class="card" style="padding:26px;max-width:640px;">
-            <div class="grid-2">
-              <div class="field" data-field="name">
-                <label class="field-label">Full name *</label>
-                <input class="input" id="f_name" type="text" placeholder="e.g. Ramanbhai Patel">
-                <div class="err">Please enter the beneficiary's full name.</div>
-              </div>
-              <div class="field" data-field="mobile">
-                <label class="field-label">Mobile number *</label>
-                <input class="input" id="f_mobile" type="text" maxlength="10" placeholder="10-digit number">
-                <div class="err">Enter a valid 10-digit mobile number.</div>
-              </div>
-            </div>
-            <div class="grid-2">
-              <div class="field" data-field="age">
-                <label class="field-label">Age (50+) *</label>
-                <input class="input" id="f_age" type="number" min="50" placeholder="e.g. 67">
-                <div class="err">Age must be 50 or above.</div>
-              </div>
-              <div class="field" data-field="gender">
-                <label class="field-label">Gender</label>
-                <select class="input" id="f_gender">
-                  <option value="">Prefer not to say</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-            </div>
-            <div class="field" data-field="location">
-              <label class="field-label">Location / Village / Ward *</label>
-              <input class="input" id="f_location" type="text" placeholder="e.g. Waghodia Ward 4, Vadodara">
-              <div class="err">Please enter a location.</div>
-            </div>
-            <div class="field">
-              <label class="field-label">Address (optional)</label>
-              <input class="input" id="f_address" type="text" placeholder="House / street, landmark">
-            </div>
-            <button class="btn btn-primary" id="toStep2Btn">Continue to schemes →</button>
-          </div>
-        </div>
-
-        <!-- Step 2 -->
-        <div id="collectStep2" style="display:none;">
-          <div class="section-head">
-            <h2>Scheme Enrollment Status</h2>
-            <div class="desc">Step 2 of 2 — choose exactly one status per scheme for <strong id="s2name"></strong>.</div>
-          </div>
-          <div id="schemeCards"></div>
-          <div style="display:flex;gap:12px;margin-top:8px;">
-            <button class="btn btn-outline" id="backToStep1Btn">← Back</button>
-            <button class="btn btn-teal" id="submitEnrollmentBtn">Save beneficiary record</button>
-          </div>
-        </div>
-
-        <!-- Success -->
-        <div id="collectSuccess" style="display:none;">
-          <div class="card" style="padding:40px;text-align:center;max-width:560px;margin:0 auto;">
-            <div style="width:52px;height:52px;border-radius:50%;background:var(--teal-bg);color:var(--teal);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;">✓</div>
-            <h2 style="margin:0 0 8px;">Record saved</h2>
-            <p style="color:var(--ink-soft);font-size:14px;">The beneficiary's details and all 13 scheme statuses have been recorded.</p>
-            <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;">
-              <button class="btn btn-primary" id="addAnotherBtn">Add another beneficiary</button>
-              <button class="btn btn-outline" id="goAnalyticsBtn">View analytics</button>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <!-- ANALYTICS -->
-    <div class="view" id="view-analytics">
-      <section class="block tight">
-        <div class="section-head">
-          <h2>Summary</h2>
-          <div class="desc">Across all beneficiaries and all 13 schemes.</div>
-        </div>
-        <div class="stat-grid" id="statGrid"></div>
-      </section>
-
-      <section class="block tight">
-        <div class="section-head">
-          <h2>Scheme-wise breakdown</h2>
-          <div class="desc">Count and share of responses, per scheme.</div>
-        </div>
-        <div class="card" style="overflow-x:auto;">
-          <table class="data-table" id="schemeTable"></table>
-        </div>
-      </section>
-
-      <section class="block tight">
-        <div class="section-head">
-          <h2>Visual charts</h2>
-        </div>
-        <div class="two-col-charts">
-          <div class="card" style="padding:20px;">
-            <div style="font-size:13px;font-weight:600;margin-bottom:10px;">Enrollment activity per scheme</div>
-            <div class="chart-wrap"><canvas id="barChart"></canvas></div>
-          </div>
-          <div class="card" style="padding:20px;">
-            <div style="font-size:13px;font-weight:600;margin-bottom:10px;">Overall status distribution</div>
-            <div class="chart-wrap"><canvas id="pieChart"></canvas></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="block tight">
-        <div class="section-head">
-          <h2>Beneficiary records</h2>
-          <div style="display:flex;gap:10px;">
-            <button class="btn btn-teal btn-sm" id="exportCsvBtn">Download CSV</button>
-          </div>
-        </div>
-        <div class="search-bar">
-          <input class="input" id="benSearch" type="text" placeholder="Search by name, mobile, or location…">
-        </div>
-        <div class="card" style="overflow-x:auto;">
-          <table class="data-table" id="benTable"></table>
-        </div>
-        <div id="benPagination" style="display:flex;gap:8px;justify-content:center;margin-top:14px;"></div>
-      </section>
-    </div>
-
-    <!-- FOLLOW-UPS -->
-    <div class="view" id="view-followups">
-      <section class="block tight">
-        <div class="section-head">
-          <h2>Follow-ups</h2>
-          <div class="desc">Beneficiaries who showed interest through awareness but haven't enrolled yet. Log outreach, then mark resolved once they enrol or opt out.</div>
-        </div>
-        <div class="kpi-row" id="followupKpis"></div>
-        <div class="search-bar">
-          <select class="input" id="followupSchemeFilter" style="max-width:320px;"></select>
-          <select class="input" id="followupStatusFilter" style="max-width:200px;">
-            <option value="open">Open follow-ups</option>
-            <option value="resolved">Resolved</option>
-            <option value="all">All</option>
-          </select>
-        </div>
-        <div id="followupList"></div>
-      </section>
-    </div>
-
-    <!-- CAMPAIGN -->
-    <div class="view" id="view-campaign">
-      <section class="block tight">
-        <div class="section-head">
-          <h2>Awareness Campaign Tracker</h2>
-          <div class="desc">Choose the scheme your team is currently running an awareness drive for. Everything below narrows to just that scheme.</div>
-        </div>
-        <div class="card" style="padding:20px;margin-bottom:24px;max-width:520px;">
-          <label class="field-label">Active campaign scheme</label>
-          <select class="input" id="campaignSchemeSelect"></select>
-        </div>
-        <div id="campaignBody"></div>
-      </section>
-    </div>
-
-    <!-- MANAGE -->
-    <div class="view" id="view-manage">
-      <section class="block tight">
-        <div class="section-head">
-          <h2>Manage Data</h2>
-          <div class="desc">Review and remove records. Deletions cannot be undone.</div>
-        </div>
-        <div class="kpi-row">
-          <div class="kpi"><div class="n mono" id="manageTotalCount">0</div><div class="l">Total records</div></div>
-        </div>
-        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
-          <button class="btn btn-outline btn-sm" id="deleteSelectedBtn" disabled>Delete selected (<span id="selCount">0</span>)</button>
-          <button class="btn btn-danger btn-sm" id="deleteAllBtn">Delete all data</button>
-          <button class="btn btn-outline btn-sm" id="exportBeforeDeleteBtn">Export before deleting</button>
-        </div>
-        <div class="card" style="overflow-x:auto;">
-          <table class="data-table" id="manageTable"></table>
-        </div>
-      </section>
-    </div>
-
-  </div>
-</main>
-
-<footer>Data is stored locally in this browser. Export CSV regularly to keep a backup. · Senior Citizen Schemes Field Platform</footer>
-
+<div id="root"></div>
 <script>
-/* ============ DATA MODEL ============ */
+const { useState, useEffect, useMemo, useCallback } = React;
+const h = React.createElement;
+
+/* ---------------- Schemes (as provided) ---------------- */
 const SCHEMES = [
-  {id:1, abbr:'IGNOAPS', name:'Indira Gandhi National Old Age Pension Scheme'},
-  {id:2, abbr:'AVYAY', name:'Atal Vayo Abhyudaya Yojana'},
-  {id:3, abbr:'RVY', name:'Rashtriya Vayoshri Yojana'},
-  {id:4, abbr:'IPSrC', name:'Integrated Programme for Senior Citizens (IPOP)'},
-  {id:5, abbr:'NPHCE', name:'National Programme for Health Care of the Elderly'},
-  {id:6, abbr:'PM-JAY', name:'Ayushman Bharat – PM-JAY'},
-  {id:7, abbr:'AB-HWC', name:'Ayushman Bharat Health & Wellness Centres'},
-  {id:8, abbr:'SCSS', name:'Senior Citizens Savings Scheme'},
-  {id:9, abbr:'PMVVY', name:'Pradhan Mantri Vaya Vandana Yojana', note:'Closed for new subscriptions — existing accounts continue'},
-  {id:10, abbr:'APY', name:'Atal Pension Yojana'},
-  {id:11, abbr:'JPDLC', name:'Jeevan Pramaan Digital Life Certificate'},
-  {id:12, abbr:'Annapurna', name:'Annapurna Scheme'},
-  {id:13, abbr:'Elderline', name:'Elderline', note:'14567 – National Helpline for Senior Citizens'}
+  { id: 1, name: "Indira Gandhi National Old Age Pension Scheme (IGNOAPS)" },
+  { id: 2, name: "Rashtriya Vayoshri Yojana (RVY)" },
+  { id: 3, name: "Manav Kalyan Yojana" },
+  { id: 4, name: "National Programme for Health Care of the Elderly (NPHCE)" },
+  { id: 5, name: "SACRED Portal" },
+  { id: 6, name: "Ayushman Bharat Health & Wellness Centres" },
+  { id: 7, name: "Senior Citizens Savings Scheme (SCSS)" },
+  { id: 8, name: "Pradhan Mantri Vaya Vandana Yojana (PMVVY)", note: "Closed for new subscriptions" },
+  { id: 9, name: "Annapurna Scheme" },
+  { id: 10, name: "Elderline", note: "14567 – National Helpline for Senior Citizens" },
 ];
 
-const STATUS_ORDER = ['enrolled_through_awareness','already_enrolled','interested_through_awareness','not_interested','not_applicable'];
-const STATUS_META = {
-  enrolled_through_awareness: {label:'Enrolled Through Awareness', color:'#2A5C8A', bg:'#EAF1F8', short:'Enrolled (Awareness)'},
-  already_enrolled:           {label:'Already Enrolled',            color:'#0F7A6C', bg:'#E7F5F2', short:'Already Enrolled'},
-  interested_through_awareness:{label:'Interested Through Awareness (Not Yet Enrolled)', color:'#C98A1F', bg:'#FBF1DE', short:'Interested'},
-  not_interested:              {label:'Not Interested',              color:'#B23B2E', bg:'#FBEAE8', short:'Not Interested'},
-  not_applicable:              {label:'Not Applicable',              color:'#767C86', bg:'#EEEFF1', short:'Not Applicable'}
+const STATUS_OPTIONS = [
+  { key: "enrolled_through_awareness", label: "Enrolled Through Awareness" },
+  { key: "already_enrolled", label: "Already Enrolled" },
+  { key: "interested_through_awareness", label: "Interested Through Awareness" },
+  { key: "not_interested", label: "Not Interested" },
+  { key: "not_applicable", label: "Not Applicable" },
+];
+const STATUS_LABEL = Object.fromEntries(STATUS_OPTIONS.map(o => [o.key, o.label]));
+const STATUS_COLOR = {
+  enrolled_through_awareness: "#2563eb",
+  already_enrolled: "#15803d",
+  interested_through_awareness: "#c2660c",
+  not_interested: "#b91c1c",
+  not_applicable: "#57606f",
 };
 
-const DB_KEY = 'ssdc_db_v1';
-function loadDB(){
-  try{
-    const raw = localStorage.getItem(DB_KEY);
-    if(!raw) return {beneficiaries:[], enrollments:[], followups:{}, campaignSchemeId: SCHEMES[0].id};
-    const db = JSON.parse(raw);
-    db.beneficiaries = db.beneficiaries || [];
-    db.enrollments = db.enrollments || [];
-    db.followups = db.followups || {};
-    db.campaignSchemeId = db.campaignSchemeId || SCHEMES[0].id;
-    return db;
-  }catch(e){
-    return {beneficiaries:[], enrollments:[], followups:{}, campaignSchemeId: SCHEMES[0].id};
+/* ---------------- Storage helpers ---------------- */
+async function storeGet(key, shared) {
+  try { const r = await window.storage.get(key, shared); return r ? r.value : null; }
+  catch (e) { return null; }
+}
+async function storeSet(key, value, shared) {
+  try { await window.storage.set(key, value, shared); return true; }
+  catch (e) { return false; }
+}
+async function storeDelete(key, shared) {
+  try { await window.storage.delete(key, shared); return true; }
+  catch (e) { return false; }
+}
+async function storeListKeys(prefix, shared) {
+  try { const r = await window.storage.list(prefix, shared); return r ? r.keys : []; }
+  catch (e) { return []; }
+}
+
+function genId() {
+  return "b" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
+async function loadBeneficiaries() {
+  const keys = await storeListKeys("beneficiary:", true);
+  const out = [];
+  for (const k of keys) {
+    const v = await storeGet(k, true);
+    if (v) { try { out.push(JSON.parse(v)); } catch (e) {} }
   }
+  out.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  return out;
 }
-function saveDB(){ localStorage.setItem(DB_KEY, JSON.stringify(DB)); }
-let DB = loadDB();
-
-function uid(prefix){ return prefix + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
-function fmtDate(iso){
-  const d = new Date(iso);
-  return d.toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
-}
-function esc(str){
-  return String(str==null?'':str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-/* ============ TOASTS ============ */
-function toast(msg, isErr){
-  const wrap = document.getElementById('toastWrap');
-  const el = document.createElement('div');
-  el.className = 'toast' + (isErr ? ' err' : '');
-  el.textContent = msg;
-  wrap.appendChild(el);
-  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .25s'; setTimeout(()=>el.remove(),250); }, 2600);
-}
-
-/* ============ MODAL (confirmation) ============ */
-function showModal({title, body, confirmLabel, danger, requireTypeDelete, onConfirm}){
-  const root = document.getElementById('modalRoot');
-  const wrap = document.createElement('div');
-  wrap.className = 'modal-backdrop';
-  wrap.innerHTML = `
-    <div class="modal">
-      <h3>${esc(title)}</h3>
-      <p>${body}</p>
-      ${requireTypeDelete ? `<input class="input" id="deleteConfirmInput" placeholder="Type DELETE to confirm">` : ''}
-      <div class="modal-actions">
-        <button class="btn btn-outline btn-sm" id="modalCancel">Cancel</button>
-        <button class="btn ${danger ? 'btn-danger' : 'btn-primary'} btn-sm" id="modalConfirm" ${requireTypeDelete ? 'disabled' : ''}>${esc(confirmLabel)}</button>
-      </div>
-    </div>`;
-  root.appendChild(wrap);
-  if(requireTypeDelete){
-    const inp = wrap.querySelector('#deleteConfirmInput');
-    const btn = wrap.querySelector('#modalConfirm');
-    inp.addEventListener('input', ()=>{ btn.disabled = inp.value.trim().toUpperCase() !== 'DELETE'; });
+async function loadEnrollments() {
+  const keys = await storeListKeys("enrollment:", true);
+  const out = {};
+  for (const k of keys) {
+    const v = await storeGet(k, true);
+    if (v) { try { const parsed = JSON.parse(v); out[parsed.beneficiaryId] = parsed.statuses; } catch (e) {} }
   }
-  wrap.querySelector('#modalCancel').addEventListener('click', ()=>wrap.remove());
-  wrap.querySelector('#modalConfirm').addEventListener('click', ()=>{ wrap.remove(); onConfirm(); });
+  return out;
 }
-
-/* ============ ROUTING ============ */
-const VIEWS = ['home','collect','analytics','followups','campaign','manage'];
-function goto(view){
-  VIEWS.forEach(v=>{
-    document.getElementById('view-'+v).classList.toggle('active', v===view);
-  });
-  document.querySelectorAll('#tabNav button').forEach(b=>{
-    b.classList.toggle('current', b.dataset.view===view);
-  });
-  window.location.hash = view;
-  renderView(view);
-}
-function renderView(view){
-  if(view==='home') renderHome();
-  if(view==='collect') renderCollectStep1();
-  if(view==='analytics') renderAnalytics();
-  if(view==='followups') renderFollowups();
-  if(view==='campaign') renderCampaign();
-  if(view==='manage') renderManage();
-}
-
-document.getElementById('tabNav').addEventListener('click', e=>{
-  const btn = e.target.closest('button[data-view]');
-  if(btn) goto(btn.dataset.view);
-});
-document.querySelectorAll('.nav-card[data-goto]').forEach(el=>{
-  el.addEventListener('click', ()=>goto(el.dataset.goto));
-});
-
-/* ============ RIPPLE BACKGROUND ============ */
-(function drawRipples(){
-  const field = document.getElementById('rippleField');
-  const rings = [90,150,220,300,390];
-  rings.forEach((r,i)=>{
-    const el = document.createElement('div');
-    el.className = 'ripple';
-    el.style.width = r*2+'px';
-    el.style.height = r*2+'px';
-    el.style.right = (-r*0.6)+'px';
-    el.style.top = (-r*0.5)+'px';
-    el.style.opacity = 0.5 - i*0.08;
-    field.appendChild(el);
-  });
-})();
-
-/* ============ HOME ============ */
-function renderHome(){
-  const totalBen = DB.beneficiaries.length;
-  const counts = {enrolled_through_awareness:0, already_enrolled:0, interested_through_awareness:0};
-  DB.enrollments.forEach(e=>{ if(counts[e.status]!==undefined) counts[e.status]++; });
-  const openFollowups = DB.beneficiaries.length ? Object.values(DB.followups).filter(f=>!f.resolved).length : 0;
-  const el = document.getElementById('homeKpis');
-  el.innerHTML = `
-    <div class="kpi"><div class="n">${totalBen}</div><div class="l">Beneficiaries surveyed</div></div>
-    <div class="kpi"><div class="n" style="color:var(--blue)">${counts.enrolled_through_awareness}</div><div class="l">Enrolled through awareness</div></div>
-    <div class="kpi"><div class="n" style="color:var(--teal)">${counts.already_enrolled}</div><div class="l">Already enrolled</div></div>
-    <div class="kpi"><div class="n" style="color:var(--marigold)">${counts.interested_through_awareness}</div><div class="l">Interested, not yet enrolled</div></div>
-    <div class="kpi"><div class="n" style="color:var(--red)">${openFollowups}</div><div class="l">Open follow-ups</div></div>
-  `;
-}
-
-/* ============ COLLECT: STEP 1 ============ */
-let draftBeneficiary = null;
-let draftStatuses = {};
-
-function resetCollectFlow(){
-  draftBeneficiary = null;
-  draftStatuses = {};
-  ['f_name','f_mobile','f_age','f_gender','f_location','f_address'].forEach(id=>{
-    document.getElementById(id).value = '';
-  });
-  document.querySelectorAll('#view-collect .field').forEach(f=>f.classList.remove('invalid'));
-}
-
-function renderCollectStep1(){
-  document.getElementById('collectStep1').style.display = '';
-  document.getElementById('collectStep2').style.display = 'none';
-  document.getElementById('collectSuccess').style.display = 'none';
-  document.getElementById('pstep1').className = 'step current';
-  document.getElementById('pstep2').className = 'step';
-}
-
-function validateStep1(){
-  let valid = true;
-  const name = document.getElementById('f_name').value.trim();
-  const mobile = document.getElementById('f_mobile').value.trim();
-  const age = document.getElementById('f_age').value.trim();
-  const location = document.getElementById('f_location').value.trim();
-
-  function markField(id, ok){
-    const fieldEl = document.querySelector(`.field[data-field="${id}"]`);
-    fieldEl.classList.toggle('invalid', !ok);
-    if(!ok) valid = false;
+async function loadFollowups() {
+  const keys = await storeListKeys("followup:", true);
+  const out = {};
+  for (const k of keys) {
+    const v = await storeGet(k, true);
+    if (v) { try { const parsed = JSON.parse(v); out[k] = parsed; } catch (e) {} }
   }
-  markField('name', name.length > 0);
-  markField('mobile', /^[6-9]\d{9}$/.test(mobile));
-  markField('age', /^\d+$/.test(age) && parseInt(age,10) >= 50);
-  markField('location', location.length > 0);
-  return valid;
+  return out;
+}
+async function loadCampaign() {
+  const v = await storeGet("campaign:active", true);
+  if (v) { try { return JSON.parse(v); } catch (e) {} }
+  return { schemeIds: [] };
 }
 
-document.getElementById('toStep2Btn').addEventListener('click', ()=>{
-  if(!validateStep1()){ toast('Please fix the highlighted fields.', true); return; }
-  draftBeneficiary = {
-    id: uid('ben'),
-    name: document.getElementById('f_name').value.trim(),
-    mobile: document.getElementById('f_mobile').value.trim(),
-    age: parseInt(document.getElementById('f_age').value.trim(),10),
-    gender: document.getElementById('f_gender').value,
-    location: document.getElementById('f_location').value.trim(),
-    address: document.getElementById('f_address').value.trim(),
-    createdAt: new Date().toISOString()
+/* ---------------- Toast ---------------- */
+function useToast() {
+  const [toast, setToast] = useState(null);
+  const show = useCallback((msg, type) => {
+    setToast({ msg, type: type || "ok" });
+    setTimeout(() => setToast(null), 2600);
+  }, []);
+  return [toast, show];
+}
+
+/* ---------------- App ---------------- */
+function App() {
+  const [page, setPage] = useState("home");
+  const [beneficiaries, setBeneficiaries] = useState([]);
+  const [enrollments, setEnrollments] = useState({});
+  const [followups, setFollowups] = useState({});
+  const [campaign, setCampaign] = useState({ schemeIds: [] });
+  const [loading, setLoading] = useState(true);
+  const [toast, showToast] = useToast();
+  const [draftBeneficiary, setDraftBeneficiary] = useState(null);
+
+  const refreshAll = useCallback(async () => {
+    setLoading(true);
+    const [b, e, f, c] = await Promise.all([loadBeneficiaries(), loadEnrollments(), loadFollowups(), loadCampaign()]);
+    setBeneficiaries(b); setEnrollments(e); setFollowups(f); setCampaign(c);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { refreshAll(); }, [refreshAll]);
+
+  const nav = (p) => { setPage(p); window.scrollTo(0, 0); };
+
+  return h("div", null,
+    h(Header, { page, nav }),
+    h("main", null,
+      loading ? h("div", { className: "empty-state" }, h("div", { className: "glyph" }, "⏳"), "Loading data…") :
+      page === "home" ? h(Home, { nav, beneficiaries, enrollments }) :
+      page === "collect" ? h(CollectData, {
+        nav, showToast, refreshAll, draftBeneficiary, setDraftBeneficiary,
+      }) :
+      page === "analysis" ? h(Analysis, { beneficiaries, enrollments }) :
+      page === "campaign" ? h(Campaign, { beneficiaries, enrollments, campaign, setCampaign, showToast }) :
+      page === "followup" ? h(FollowUp, { beneficiaries, enrollments, followups, setFollowups, showToast }) :
+      page === "manage" ? h(ManageData, { beneficiaries, refreshAll, showToast }) : null
+    ),
+    h("footer", { className: "app-footer" }, "Senior Citizen Government Schemes Platform — data is stored securely and shared across your field team."),
+    toast && h("div", { className: "toast" + (toast.type === "error" ? " error" : "") }, toast.msg)
+  );
+}
+
+function Header({ page, nav }) {
+  const tabs = [
+    ["home", "Home"],
+    ["collect", "Collect Data"],
+    ["analysis", "View Analysis"],
+    ["campaign", "Awareness Campaign"],
+    ["followup", "Follow-Up"],
+    ["manage", "Manage Data"],
+  ];
+  return h("header", { className: "app-header" },
+    h("div", { className: "app-header-inner" },
+      h("div", { className: "brand", style: { cursor: "pointer" }, onClick: () => nav("home") },
+        h("div", { className: "brand-badge" }, "SC"),
+        h("div", null,
+          h("div", { className: "brand-title" }, "Senior Citizen Government Schemes"),
+          h("div", { className: "brand-sub" }, "Data Collection & Analysis Platform")
+        )
+      ),
+      h("nav", { className: "nav-tabs" },
+        tabs.map(([key, label]) => h("button", {
+          key, className: "nav-tab" + (page === key ? " active" : ""), onClick: () => nav(key)
+        }, label))
+      )
+    )
+  );
+}
+
+/* ---------------- Home ---------------- */
+function Home({ nav, beneficiaries, enrollments }) {
+  const totalInterested = useMemo(() => {
+    let n = 0;
+    Object.values(enrollments).forEach(st => Object.values(st || {}).forEach(v => { if (v === "interested_through_awareness") n++; }));
+    return n;
+  }, [enrollments]);
+
+  const cards = [
+    { key: "collect", cls: "tab-blue", icon: "01", title: "Collect Data", desc: "Register a beneficiary and record their enrollment status across all schemes.", },
+    { key: "analysis", cls: "tab-purple", icon: "02", title: "View Analysis", desc: "Summary counts, scheme-wise breakdowns, charts, and CSV export.", },
+    { key: "campaign", cls: "tab-navy", icon: "03", title: "Awareness Campaign", desc: "Mark which schemes you're actively running awareness for, and track their reach.", },
+    { key: "followup", cls: "tab-orange", icon: "04", title: "Follow-Up", desc: "Beneficiaries who showed interest through awareness and still need a follow-up visit or call.", },
+    { key: "manage", cls: "tab-red", icon: "05", title: "Manage Data", desc: "Review, delete, or export records before resetting the dataset.", },
+  ];
+
+  return h("div", null,
+    h("div", { className: "hero" },
+      h("div", { className: "hero-eyebrow" }, "Field Data Platform"),
+      h("h1", null, "Senior Citizen Government Schemes — Data Collection & Analysis Platform"),
+      h("p", null, "Register beneficiaries in the field, track their enrollment status across 10 senior-citizen schemes, run awareness campaigns, follow up on interested beneficiaries, and analyze the results.")
+    ),
+    h("div", { className: "home-stats" },
+      h("div", { className: "home-stat" }, h("div", { className: "num" }, beneficiaries.length), h("div", { className: "lbl" }, "Beneficiaries")),
+      h("div", { className: "home-stat" }, h("div", { className: "num" }, SCHEMES.length), h("div", { className: "lbl" }, "Schemes Tracked")),
+      h("div", { className: "home-stat" }, h("div", { className: "num" }, totalInterested), h("div", { className: "lbl" }, "Awaiting Follow-Up"))
+    ),
+    h("div", { className: "home-grid" },
+      cards.map(c => h("div", { key: c.key, className: "home-card", onClick: () => nav(c.key) },
+        h("div", { className: "icon-tab " + c.cls }, c.icon),
+        h("h3", null, c.title),
+        h("p", null, c.desc)
+      ))
+    )
+  );
+}
+
+/* ---------------- Collect Data ---------------- */
+function CollectData({ nav, showToast, refreshAll, draftBeneficiary, setDraftBeneficiary }) {
+  const [step, setStep] = useState(1);
+  const [form, setForm] = useState({ name: "", mobile: "", age: "", location: "", gender: "", address: "" });
+  const [errors, setErrors] = useState({});
+  const [statuses, setStatuses] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const [done, setDone] = useState(false);
+
+  const validateStep1 = () => {
+    const e = {};
+    if (!form.name.trim()) e.name = "Full name is required.";
+    if (!/^\d{10}$/.test(form.mobile.trim())) e.mobile = "Enter exactly 10 digits.";
+    const ageNum = Number(form.age);
+    if (!form.age || isNaN(ageNum) || ageNum < 50) e.age = "Age must be 50 or above.";
+    if (!form.location.trim()) e.location = "Location / Village / Ward is required.";
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
-  draftStatuses = {};
-  renderStep2();
-});
 
-function renderStep2(){
-  document.getElementById('collectStep1').style.display = 'none';
-  document.getElementById('collectStep2').style.display = '';
-  document.getElementById('pstep1').className = 'step done';
-  document.getElementById('pstep2').className = 'step current';
-  document.getElementById('s2name').textContent = draftBeneficiary.name;
+  const goNext = () => { if (validateStep1()) setStep(2); };
 
-  const wrap = document.getElementById('schemeCards');
-  wrap.innerHTML = SCHEMES.map(s => `
-    <div class="card scheme-card" data-scheme-card="${s.id}">
-      <div class="scheme-title">
-        <h4>${s.id}. ${esc(s.name)}</h4>
-        <span class="scheme-abbr">${esc(s.abbr)}</span>
-        ${s.note ? `<span class="badge-note">${esc(s.note)}</span>` : ''}
-      </div>
-      <div class="status-options">
-        ${STATUS_ORDER.map(st => `
-          <label class="status-opt sel-${st}" data-scheme="${s.id}" data-status="${st}">
-            <input type="radio" name="scheme_${s.id}" value="${st}">
-            ${STATUS_META[st].short}
-          </label>
-        `).join('')}
-      </div>
-    </div>
-  `).join('');
+  const setStatus = (schemeId, statusKey) => setStatuses(s => ({ ...s, [schemeId]: statusKey }));
 
-  wrap.querySelectorAll('.status-opt').forEach(opt=>{
-    opt.addEventListener('click', ()=>{
-      const schemeId = opt.dataset.scheme;
-      const status = opt.dataset.status;
-      draftStatuses[schemeId] = status;
-      const card = wrap.querySelector(`[data-scheme-card="${schemeId}"]`);
-      card.querySelectorAll('.status-opt').forEach(o=>o.classList.remove('selected'));
-      opt.classList.add('selected');
-      card.classList.remove('incomplete');
-    });
-  });
+  const allSchemesAnswered = SCHEMES.every(s => statuses[s.id]);
+
+  const submitAll = async () => {
+    if (!allSchemesAnswered) { showToast("Please select a status for every scheme.", "error"); return; }
+    setSubmitting(true);
+    const id = genId();
+    const beneficiary = { id, name: form.name.trim(), mobile: form.mobile.trim(), age: Number(form.age), location: form.location.trim(), gender: form.gender, address: form.address.trim(), createdAt: new Date().toISOString() };
+    await storeSet("beneficiary:" + id, JSON.stringify(beneficiary), true);
+    await storeSet("enrollment:" + id, JSON.stringify({ beneficiaryId: id, statuses }), true);
+    // create follow-up entries for anyone marked interested_through_awareness
+    for (const s of SCHEMES) {
+      if (statuses[s.id] === "interested_through_awareness") {
+        const fk = "followup:" + id + ":" + s.id;
+        await storeSet(fk, JSON.stringify({ beneficiaryId: id, schemeId: s.id, status: "pending", notes: "", updatedAt: new Date().toISOString() }), true);
+      }
+    }
+    setSubmitting(false);
+    setDone(true);
+    await refreshAll();
+  };
+
+  const resetForm = () => {
+    setForm({ name: "", mobile: "", age: "", location: "", gender: "", address: "" });
+    setStatuses({});
+    setErrors({});
+    setStep(1);
+    setDone(false);
+  };
+
+  if (done) {
+    return h("div", { className: "panel", style: { textAlign: "center", padding: "40px 24px" } },
+      h("div", { style: { fontSize: 34, marginBottom: 10 } }, "✅"),
+      h("h2", { style: { color: "var(--navy-900)" } }, "Beneficiary Saved"),
+      h("p", { style: { color: "var(--ink-dim)" } }, form.name + " has been recorded with their scheme enrollment status."),
+      h("div", { style: { display: "flex", gap: 12, justifyContent: "center", marginTop: 18, flexWrap: "wrap" } },
+        h("button", { className: "btn btn-saffron", onClick: resetForm }, "+ Add Another Beneficiary"),
+        h("button", { className: "btn btn-outline", onClick: () => nav("analysis") }, "View Analytics")
+      )
+    );
+  }
+
+  return h("div", null,
+    h("div", { className: "steps" },
+      h("div", { className: "step-pill" + (step === 1 ? " active" : "") }, "1. Beneficiary Details"),
+      h("div", { className: "step-arrow" }, "→"),
+      h("div", { className: "step-pill" + (step === 2 ? " active" : "") }, "2. Scheme Enrollment Status")
+    ),
+    step === 1 && h("div", { className: "panel" },
+      h("div", { className: "panel-title" }, "Beneficiary Details"),
+      h("div", { className: "panel-sub" }, "Basic details of the senior citizen being registered."),
+      h("div", { className: "field" }, h("label", null, "Full Name *"),
+        h("input", { value: form.name, onChange: e => setForm({ ...form, name: e.target.value }), placeholder: "e.g. Ramesh Patel" }),
+        errors.name && h("div", { className: "err" }, errors.name)),
+      h("div", { className: "field-row" },
+        h("div", { className: "field" }, h("label", null, "Mobile Number *"),
+          h("input", { value: form.mobile, maxLength: 10, onChange: e => setForm({ ...form, mobile: e.target.value.replace(/\D/g, "") }), placeholder: "10-digit number" }),
+          errors.mobile && h("div", { className: "err" }, errors.mobile)),
+        h("div", { className: "field" }, h("label", null, "Age *"),
+          h("input", { type: "number", min: 50, value: form.age, onChange: e => setForm({ ...form, age: e.target.value }), placeholder: "Minimum 50" }),
+          errors.age && h("div", { className: "err" }, errors.age))
+      ),
+      h("div", { className: "field" }, h("label", null, "Location / Village / Ward *"),
+        h("input", { value: form.location, onChange: e => setForm({ ...form, location: e.target.value }), placeholder: "e.g. Ward 4, Kapadvanj" }),
+        errors.location && h("div", { className: "err" }, errors.location)),
+      h("div", { className: "field-row" },
+        h("div", { className: "field" }, h("label", null, "Gender"),
+          h("select", { value: form.gender, onChange: e => setForm({ ...form, gender: e.target.value }) },
+            h("option", { value: "" }, "Select"),
+            h("option", { value: "Male" }, "Male"),
+            h("option", { value: "Female" }, "Female"),
+            h("option", { value: "Other" }, "Other"))),
+        h("div", { className: "field" }, h("label", null, "Address"),
+          h("input", { value: form.address, onChange: e => setForm({ ...form, address: e.target.value }), placeholder: "Optional full address" }))
+      ),
+      h("div", { style: { textAlign: "right" } }, h("button", { className: "btn btn-primary", onClick: goNext }, "Next: Scheme Enrollment →"))
+    ),
+    step === 2 && h("div", null,
+      h("div", { className: "panel" },
+        h("div", { className: "flex-between" },
+          h("div", null,
+            h("div", { className: "panel-title" }, "Scheme Enrollment Status"),
+            h("div", { className: "panel-sub" }, "Select one status for each of the " + SCHEMES.length + " schemes below.")
+          ),
+          h("div", { className: "mono", style: { fontSize: 12.5, color: "var(--ink-dim)" } },
+            Object.keys(statuses).length + " / " + SCHEMES.length + " answered")
+        ),
+        SCHEMES.map(s => h("div", { key: s.id, className: "scheme-row" },
+          h("div", { className: "scheme-row-head" },
+            h("div", { className: "scheme-idx" }, s.id),
+            h("div", null,
+              h("div", { className: "scheme-name" }, s.name),
+              s.note && h("div", { className: "scheme-note" }, "(" + s.note + ")")
+            )
+          ),
+          h("div", { className: "option-grid" },
+            STATUS_OPTIONS.map(opt => h("button", {
+              key: opt.key,
+              className: "opt-btn sel-" + opt.key + (statuses[s.id] === opt.key ? " selected" : ""),
+              onClick: () => setStatus(s.id, opt.key)
+            }, opt.label))
+          )
+        )),
+        h("div", { className: "flex-between", style: { marginTop: 10 } },
+          h("button", { className: "btn btn-outline", onClick: () => setStep(1) }, "← Back"),
+          h("button", { className: "btn btn-saffron", disabled: submitting || !allSchemesAnswered, onClick: submitAll },
+            submitting ? "Saving…" : "Submit Beneficiary Record")
+        )
+      )
+    )
+  );
 }
 
-document.getElementById('backToStep1Btn').addEventListener('click', renderCollectStep1);
+/* ---------------- Analysis ---------------- */
+function Analysis({ beneficiaries, enrollments }) {
+  const [search, setSearch] = useState("");
+  const [expanded, setExpanded] = useState({});
+  const [pageIdx, setPageIdx] = useState(0);
+  const PAGE_SIZE = 8;
 
-document.getElementById('submitEnrollmentBtn').addEventListener('click', ()=>{
-  const missing = SCHEMES.filter(s => !draftStatuses[s.id]);
-  if(missing.length){
-    missing.forEach(s=>{
-      document.querySelector(`[data-scheme-card="${s.id}"]`).classList.add('incomplete');
+  const overallCounts = useMemo(() => {
+    const c = { enrolled_through_awareness: 0, already_enrolled: 0, interested_through_awareness: 0, not_interested: 0, not_applicable: 0 };
+    Object.values(enrollments).forEach(st => Object.values(st || {}).forEach(v => { if (c[v] !== undefined) c[v]++; }));
+    return c;
+  }, [enrollments]);
+
+  const schemeStats = useMemo(() => {
+    return SCHEMES.map(s => {
+      const c = { enrolled_through_awareness: 0, already_enrolled: 0, interested_through_awareness: 0, not_interested: 0, not_applicable: 0 };
+      Object.values(enrollments).forEach(st => { const v = st && st[s.id]; if (v && c[v] !== undefined) c[v]++; });
+      const total = Object.values(c).reduce((a, b) => a + b, 0);
+      return { scheme: s, counts: c, total };
     });
-    document.querySelector(`[data-scheme-card="${missing[0].id}"]`).scrollIntoView({behavior:'smooth', block:'center'});
-    toast(`Please select a status for all 13 schemes (${missing.length} remaining).`, true);
-    return;
-  }
-  DB.beneficiaries.push(draftBeneficiary);
-  SCHEMES.forEach(s=>{
-    const status = draftStatuses[s.id];
-    const enrollment = {
-      id: uid('enr'),
-      beneficiaryId: draftBeneficiary.id,
-      schemeId: s.id,
-      schemeName: s.name,
-      status,
-      createdAt: new Date().toISOString()
+  }, [enrollments]);
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return beneficiaries;
+    return beneficiaries.filter(b => (b.name || "").toLowerCase().includes(q) || (b.mobile || "").includes(q) || (b.location || "").toLowerCase().includes(q));
+  }, [beneficiaries, search]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const pageRows = filtered.slice(pageIdx * PAGE_SIZE, pageIdx * PAGE_SIZE + PAGE_SIZE);
+
+  const downloadCSV = () => {
+    const headers = ["Name", "Mobile Number", "Age", "Location", "Gender", "Date Added", ...SCHEMES.map(s => s.name)];
+    const rows = beneficiaries.map(b => {
+      const st = enrollments[b.id] || {};
+      const schemeCols = SCHEMES.map(s => STATUS_LABEL[st[s.id]] || "Not Recorded");
+      return [b.name, b.mobile, b.age, b.location, b.gender || "", new Date(b.createdAt).toLocaleDateString(), ...schemeCols];
+    });
+    const csv = [headers, ...rows].map(r => r.map(cell => '"' + String(cell).replace(/"/g, '""') + '"').join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const date = new Date().toISOString().slice(0, 10);
+    a.href = url; a.download = "senior-schemes-data-" + date + ".csv";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const maxSchemeTotal = Math.max(1, ...schemeStats.map(s => s.total));
+
+  return h("div", null,
+    h("div", { className: "summary-grid" },
+      h("div", { className: "summary-card sc-total" }, h("div", { className: "num" }, beneficiaries.length), h("div", { className: "lbl" }, "Total Beneficiaries")),
+      STATUS_OPTIONS.map(opt => h("div", { key: opt.key, className: "summary-card sc-" + opt.key },
+        h("div", { className: "num" }, overallCounts[opt.key]), h("div", { className: "lbl" }, opt.label)))
+    ),
+
+    h("div", { className: "panel" },
+      h("div", { className: "panel-title" }, "Scheme-Wise Breakdown"),
+      h("div", { className: "panel-sub" }, "Count and percentage of each status, per scheme."),
+      h("div", { className: "table-wrap" },
+        h("table", null,
+          h("thead", null, h("tr", null,
+            h("th", null, "Scheme"),
+            STATUS_OPTIONS.map(o => h("th", { key: o.key }, o.label)),
+            h("th", null, "Total")
+          )),
+          h("tbody", null,
+            schemeStats.map(row => h("tr", { key: row.scheme.id },
+              h("td", null, h("strong", null, row.scheme.id + ". " + row.scheme.name)),
+              STATUS_OPTIONS.map(o => {
+                const cnt = row.counts[o.key];
+                const pct = row.total ? Math.round((cnt / row.total) * 100) : 0;
+                return h("td", { key: o.key },
+                  h("div", { className: "cell-stat" },
+                    h("span", null, cnt + " (" + pct + "%)"),
+                    h("div", { className: "bar-track" }, h("div", { className: "bar-fill", style: { width: pct + "%", background: STATUS_COLOR[o.key] } }))
+                  ));
+              }),
+              h("td", null, h("strong", null, row.total))
+            ))
+          )
+        )
+      )
+    ),
+
+    h("div", { className: "panel" },
+      h("div", { className: "panel-title" }, "Charts"),
+      h("div", { style: { display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 24, alignItems: "start" }, className: "chart-grid" },
+        h(BarChart, { data: schemeStats, max: maxSchemeTotal }),
+        h(PieChart, { counts: overallCounts })
+      )
+    ),
+
+    h("div", { className: "panel" },
+      h("div", { className: "flex-between" },
+        h("div", null, h("div", { className: "panel-title" }, "Beneficiary Records"), h("div", { className: "panel-sub" }, filtered.length + " record(s) found")),
+        h("button", { className: "btn btn-saffron", onClick: downloadCSV }, "⬇ Download CSV")
+      ),
+      h("div", { className: "search-bar" },
+        h("input", { placeholder: "Search by name, mobile, or location…", value: search, onChange: e => { setSearch(e.target.value); setPageIdx(0); } })
+      ),
+      filtered.length === 0 ? h("div", { className: "empty-state" }, h("div", { className: "glyph" }, "🗂"), "No records match your search.") :
+      h("div", { className: "table-wrap" },
+        h("table", null,
+          h("thead", null, h("tr", null, h("th", null, "Name"), h("th", null, "Mobile"), h("th", null, "Age"), h("th", null, "Location"), h("th", null, "Date Added"), h("th", null, "Actions"))),
+          h("tbody", null,
+            pageRows.map(b => {
+              const isOpen = expanded[b.id];
+              return h(React.Fragment, { key: b.id },
+                h("tr", null,
+                  h("td", null, b.name),
+                  h("td", { className: "mono" }, b.mobile),
+                  h("td", null, b.age),
+                  h("td", null, b.location),
+                  h("td", null, new Date(b.createdAt).toLocaleDateString()),
+                  h("td", null, h("button", { className: "btn btn-outline btn-sm", onClick: () => setExpanded(e => ({ ...e, [b.id]: !e[b.id] })) }, isOpen ? "Hide" : "View Schemes"))
+                ),
+                isOpen && h("tr", { className: "expand-row" }, h("td", { colSpan: 6 },
+                  h("div", { className: "exp-schemes" },
+                    SCHEMES.map(s => {
+                      const st = (enrollments[b.id] || {})[s.id];
+                      return h("span", { key: s.id, className: "badge badge-" + (st || "not_applicable") },
+                        s.id + ". " + s.name.split(" (")[0] + ": " + (STATUS_LABEL[st] || "Not Recorded"));
+                    })
+                  )
+                ))
+              );
+            })
+          )
+        )
+      ),
+      totalPages > 1 && h("div", { className: "pagination" },
+        h("button", { className: "btn btn-outline btn-sm", disabled: pageIdx === 0, onClick: () => setPageIdx(p => p - 1) }, "← Prev"),
+        h("span", { className: "mono", style: { fontSize: 12.5 } }, "Page " + (pageIdx + 1) + " of " + totalPages),
+        h("button", { className: "btn btn-outline btn-sm", disabled: pageIdx >= totalPages - 1, onClick: () => setPageIdx(p => p + 1) }, "Next →")
+      )
+    )
+  );
+}
+
+function BarChart({ data, max }) {
+  const w = 560, barH = 20, gap = 14, leftPad = 210, chartW = w - leftPad - 20;
+  const h_ = data.length * (barH + gap) + 20;
+  return h("div", null,
+    h("div", { style: { fontSize: 12.5, fontWeight: 700, color: "var(--navy-900)", marginBottom: 10 } }, "Enrolled + Interested (via Awareness) per Scheme"),
+    h("svg", { viewBox: "0 0 " + w + " " + h_, style: { width: "100%", height: "auto" } },
+      data.map((row, i) => {
+        const y = i * (barH + gap) + 10;
+        const val = row.counts.enrolled_through_awareness + row.counts.interested_through_awareness;
+        const bw = max ? (val / max) * chartW : 0;
+        return h("g", { key: row.scheme.id },
+          h("text", { x: leftPad - 8, y: y + barH * 0.72, textAnchor: "end", fontSize: "10.5", fill: "#5b6270" }, row.scheme.id + ". " + row.scheme.name.split(" (")[0].slice(0, 26)),
+          h("rect", { x: leftPad, y, width: chartW, height: barH, fill: "#f0ede5", rx: 4 }),
+          h("rect", { x: leftPad, y, width: bw, height: barH, fill: "#2563eb", rx: 4 }),
+          h("text", { x: leftPad + bw + 6, y: y + barH * 0.72, fontSize: "10.5", fill: "#1c1e21", fontWeight: 700 }, val)
+        );
+      })
+    )
+  );
+}
+
+function PieChart({ counts }) {
+  const total = Object.values(counts).reduce((a, b) => a + b, 0);
+  const cx = 100, cy = 100, r = 90;
+  let angle = -90;
+  const slices = STATUS_OPTIONS.map(opt => {
+    const val = counts[opt.key];
+    const frac = total ? val / total : 0;
+    const start = angle;
+    const sweep = frac * 360;
+    angle += sweep;
+    const end = angle;
+    const large = sweep > 180 ? 1 : 0;
+    const toXY = (deg) => {
+      const rad = (deg * Math.PI) / 180;
+      return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)];
     };
-    DB.enrollments.push(enrollment);
-    if(status === 'interested_through_awareness'){
-      DB.followups[enrollment.id] = {notes:[], resolved:false, resolvedAs:null};
-    }
+    const [x1, y1] = toXY(start);
+    const [x2, y2] = toXY(end);
+    const d = total === 0 ? "" : `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} Z`;
+    return { d, color: STATUS_COLOR[opt.key], label: opt.label, val, pct: total ? Math.round(frac * 100) : 0 };
   });
-  saveDB();
-  document.getElementById('collectStep2').style.display = 'none';
-  document.getElementById('collectSuccess').style.display = '';
-  document.getElementById('pstep2').className = 'step done';
-  toast('Beneficiary record saved.');
-});
-
-document.getElementById('addAnotherBtn').addEventListener('click', ()=>{
-  resetCollectFlow();
-  renderCollectStep1();
-});
-document.getElementById('goAnalyticsBtn').addEventListener('click', ()=>goto('analytics'));
-
-/* ============ ANALYTICS ============ */
-let barChartInstance = null, pieChartInstance = null;
-let benPage = 1;
-const BEN_PAGE_SIZE = 8;
-
-function computeSchemeStats(){
-  return SCHEMES.map(s=>{
-    const rows = DB.enrollments.filter(e=>e.schemeId===s.id);
-    const counts = {};
-    STATUS_ORDER.forEach(st=>counts[st] = rows.filter(r=>r.status===st).length);
-    const total = rows.length;
-    return {scheme:s, counts, total};
-  });
+  return h("div", null,
+    h("div", { style: { fontSize: 12.5, fontWeight: 700, color: "var(--navy-900)", marginBottom: 10 } }, "Overall Status Distribution"),
+    h("svg", { viewBox: "0 0 200 200", style: { width: "100%", maxWidth: 220, height: "auto", display: "block", margin: "0 auto" } },
+      total === 0 ? h("circle", { cx: 100, cy: 100, r: 90, fill: "#eceef1" }) : slices.map((s, i) => h("path", { key: i, d: s.d, fill: s.color }))
+    ),
+    h("div", { style: { display: "flex", flexDirection: "column", gap: 6, marginTop: 12 } },
+      slices.map((s, i) => h("div", { key: i, style: { display: "flex", alignItems: "center", gap: 8, fontSize: 12 } },
+        h("span", { style: { width: 10, height: 10, borderRadius: 3, background: s.color, display: "inline-block", flexShrink: 0 } }),
+        h("span", { style: { color: "var(--ink-dim)" } }, s.label + ": "),
+        h("strong", null, s.val + " (" + s.pct + "%)")
+      ))
+    )
+  );
 }
 
-function renderAnalytics(){
-  const totalBen = DB.beneficiaries.length;
-  const overall = {};
-  STATUS_ORDER.forEach(st=>overall[st]=0);
-  DB.enrollments.forEach(e=>{ overall[e.status]++; });
+/* ---------------- Awareness Campaign ---------------- */
+function Campaign({ beneficiaries, enrollments, campaign, setCampaign, showToast }) {
+  const toggleScheme = async (id) => {
+    const ids = campaign.schemeIds.includes(id) ? campaign.schemeIds.filter(x => x !== id) : [...campaign.schemeIds, id];
+    const next = { schemeIds: ids, updatedAt: new Date().toISOString() };
+    setCampaign(next);
+    await storeSet("campaign:active", JSON.stringify(next), true);
+    showToast("Awareness campaign updated.");
+  };
 
-  document.getElementById('statGrid').innerHTML = `
-    <div class="stat-card card"><div class="ring"></div><div class="stat-num">${totalBen}</div><div class="stat-label">Total Beneficiaries Surveyed</div></div>
-    <div class="stat-card card"><div class="ring" style="--accent:var(--blue)"></div><div class="stat-num" style="color:var(--blue)">${overall.enrolled_through_awareness}</div><div class="stat-label">Enrolled Through Awareness</div></div>
-    <div class="stat-card card"><div class="ring" style="--accent:var(--teal)"></div><div class="stat-num" style="color:var(--teal)">${overall.already_enrolled}</div><div class="stat-label">Already Enrolled</div></div>
-    <div class="stat-card card"><div class="ring" style="--accent:var(--marigold)"></div><div class="stat-num" style="color:var(--marigold)">${overall.interested_through_awareness}</div><div class="stat-label">Interested Through Awareness</div></div>
-    <div class="stat-card card"><div class="ring" style="--accent:var(--red)"></div><div class="stat-num" style="color:var(--red)">${overall.not_interested}</div><div class="stat-label">Not Interested</div></div>
-    <div class="stat-card card"><div class="ring" style="--accent:var(--gray)"></div><div class="stat-num" style="color:var(--gray)">${overall.not_applicable}</div><div class="stat-label">Not Applicable</div></div>
-  `;
+  const activeSchemes = SCHEMES.filter(s => campaign.schemeIds.includes(s.id));
 
-  const schemeStats = computeSchemeStats();
-  const pct = (n,t) => t ? Math.round((n/t)*100) : 0;
-  document.getElementById('schemeTable').innerHTML = `
-    <thead><tr>
-      <th>Scheme</th>
-      <th>Enrolled (Awareness)</th><th>Already Enrolled</th><th>Interested</th><th>Not Interested</th><th>N/A</th><th>Total</th>
-    </tr></thead>
-    <tbody>
-      ${schemeStats.map(row=>`
-        <tr>
-          <td><strong>${esc(row.scheme.name)}</strong><br><span class="mono" style="font-size:11px;color:var(--ink-soft);">${esc(row.scheme.abbr)}</span></td>
-          ${STATUS_ORDER.map(st=>`
-            <td>
-              <div class="bar-cell">
-                <span>${row.counts[st]} <span style="color:var(--ink-soft);">(${pct(row.counts[st],row.total)}%)</span></span>
-                <div class="bar-track"><div class="bar-fill" style="width:${pct(row.counts[st],row.total)}%;background:${STATUS_META[st].color}"></div></div>
-              </div>
-            </td>
-          `).join('')}
-          <td class="mono">${row.total}</td>
-        </tr>
-      `).join('')}
-    </tbody>
-  `;
-
-  // Bar chart: enrolled_through_awareness + already_enrolled per scheme
-  const barCtx = document.getElementById('barChart').getContext('2d');
-  if(barChartInstance) barChartInstance.destroy();
-  barChartInstance = new Chart(barCtx, {
-    type:'bar',
-    data:{
-      labels: schemeStats.map(r=>r.scheme.abbr),
-      datasets:[
-        {label:'Enrolled (Awareness)', data:schemeStats.map(r=>r.counts.enrolled_through_awareness), backgroundColor:STATUS_META.enrolled_through_awareness.color},
-        {label:'Already Enrolled', data:schemeStats.map(r=>r.counts.already_enrolled), backgroundColor:STATUS_META.already_enrolled.color},
-        {label:'Interested', data:schemeStats.map(r=>r.counts.interested_through_awareness), backgroundColor:STATUS_META.interested_through_awareness.color}
-      ]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      scales:{ x:{stacked:false, ticks:{font:{size:10}}}, y:{beginAtZero:true, ticks:{precision:0}} },
-      plugins:{ legend:{position:'bottom', labels:{font:{size:11}}} }
-    }
-  });
-
-  const pieCtx = document.getElementById('pieChart').getContext('2d');
-  if(pieChartInstance) pieChartInstance.destroy();
-  pieChartInstance = new Chart(pieCtx, {
-    type:'pie',
-    data:{
-      labels: STATUS_ORDER.map(st=>STATUS_META[st].short),
-      datasets:[{ data: STATUS_ORDER.map(st=>overall[st]), backgroundColor: STATUS_ORDER.map(st=>STATUS_META[st].color) }]
-    },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{position:'bottom', labels:{font:{size:11}}} } }
-  });
-
-  benPage = 1;
-  renderBenTable();
-}
-
-function getFilteredBeneficiaries(){
-  const q = (document.getElementById('benSearch').value||'').toLowerCase().trim();
-  let list = DB.beneficiaries.slice().sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
-  if(q){
-    list = list.filter(b => b.name.toLowerCase().includes(q) || b.mobile.includes(q) || (b.location||'').toLowerCase().includes(q));
-  }
-  return list;
-}
-
-function renderBenTable(){
-  const list = getFilteredBeneficiaries();
-  const totalPages = Math.max(1, Math.ceil(list.length / BEN_PAGE_SIZE));
-  benPage = Math.min(benPage, totalPages);
-  const pageItems = list.slice((benPage-1)*BEN_PAGE_SIZE, benPage*BEN_PAGE_SIZE);
-
-  const table = document.getElementById('benTable');
-  if(!list.length){
-    table.innerHTML = `<tbody><tr><td style="padding:30px;text-align:center;color:var(--ink-soft);">No beneficiary records yet. Go to Collect Data to add the first one.</td></tr></tbody>`;
-  } else {
-    table.innerHTML = `
-      <thead><tr><th>Name</th><th>Mobile</th><th>Age</th><th>Location</th><th>Date Added</th><th></th></tr></thead>
-      <tbody>
-        ${pageItems.map(b=>`
-          <tr>
-            <td><strong>${esc(b.name)}</strong></td>
-            <td class="mono">${esc(b.mobile)}</td>
-            <td>${b.age}</td>
-            <td>${esc(b.location)}</td>
-            <td>${fmtDate(b.createdAt)}</td>
-            <td><button class="btn btn-ghost btn-sm expand-toggle" data-ben="${b.id}">View schemes</button></td>
-          </tr>
-          <tr class="expand-row" id="expand-${b.id}" style="display:none;">
-            <td colspan="6">
-              <div class="expand-inner">
-                <div class="mini-grid">
-                  ${DB.enrollments.filter(e=>e.beneficiaryId===b.id).map(e=>`
-                    <div class="mini-item"><span>${esc(e.schemeName)}</span><span class="pill pill-${e.status}">${STATUS_META[e.status].short}</span></div>
-                  `).join('')}
-                </div>
-              </div>
-            </td>
-          </tr>
-        `).join('')}
-      </tbody>
-    `;
-    table.querySelectorAll('.expand-toggle').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const row = document.getElementById('expand-'+btn.dataset.ben);
-        const showing = row.style.display !== 'none';
-        row.style.display = showing ? 'none' : '';
-        btn.textContent = showing ? 'View schemes' : 'Hide schemes';
-      });
+  const statsForScheme = (schemeId) => {
+    const c = { enrolled_through_awareness: 0, already_enrolled: 0, interested_through_awareness: 0, not_interested: 0, not_applicable: 0 };
+    const people = [];
+    Object.entries(enrollments).forEach(([bid, st]) => {
+      const v = st && st[schemeId];
+      if (v && c[v] !== undefined) { c[v]++; if (v === "enrolled_through_awareness" || v === "interested_through_awareness") people.push(bid); }
     });
-  }
+    return { c, people };
+  };
 
-  const pager = document.getElementById('benPagination');
-  if(totalPages <= 1){ pager.innerHTML=''; }
-  else{
-    let html = '';
-    for(let i=1;i<=totalPages;i++){
-      html += `<button class="btn btn-sm ${i===benPage?'btn-primary':'btn-outline'}" data-page="${i}">${i}</button>`;
-    }
-    pager.innerHTML = html;
-    pager.querySelectorAll('button').forEach(b=>b.addEventListener('click', ()=>{ benPage = parseInt(b.dataset.page,10); renderBenTable(); }));
-  }
-}
-document.getElementById('benSearch').addEventListener('input', ()=>{ benPage = 1; renderBenTable(); });
+  const beneficiaryById = useMemo(() => Object.fromEntries(beneficiaries.map(b => [b.id, b])), [beneficiaries]);
 
-document.getElementById('exportCsvBtn').addEventListener('click', ()=>exportCSV(DB.beneficiaries));
-document.getElementById('exportBeforeDeleteBtn').addEventListener('click', ()=>exportCSV(DB.beneficiaries));
+  return h("div", null,
+    h("div", { className: "panel" },
+      h("div", { className: "panel-title" }, "Awareness Campaign"),
+      h("div", { className: "panel-sub" }, "Select the scheme(s) you're currently running an awareness drive for. This keeps a focused view of that campaign's data — separate from the full analytics."),
+      h("div", { style: { display: "flex", flexWrap: "wrap", gap: 8 } },
+        SCHEMES.map(s => h("button", {
+          key: s.id, className: "chip" + (campaign.schemeIds.includes(s.id) ? " on" : ""), onClick: () => toggleScheme(s.id)
+        }, (campaign.schemeIds.includes(s.id) ? "✓ " : "") + s.id + ". " + s.name.split(" (")[0]))
+      )
+    ),
 
-function exportCSV(beneficiaries){
-  if(!beneficiaries.length){ toast('There is no data to export yet.', true); return; }
-  const headers = ['Name','Mobile','Age','Gender','Location','Address','Date Added', ...SCHEMES.map(s=>s.name)];
-  const rows = beneficiaries.map(b=>{
-    const enrollMap = {};
-    DB.enrollments.filter(e=>e.beneficiaryId===b.id).forEach(e=>enrollMap[e.schemeId]=STATUS_META[e.status].short);
-    return [
-      b.name, b.mobile, b.age, b.gender||'', b.location, b.address||'', fmtDate(b.createdAt),
-      ...SCHEMES.map(s=>enrollMap[s.id]||'')
-    ];
-  });
-  const csvEscape = v => `"${String(v).replace(/"/g,'""')}"`;
-  const csv = [headers.map(csvEscape).join(','), ...rows.map(r=>r.map(csvEscape).join(','))].join('\n');
-  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  const today = new Date().toISOString().slice(0,10);
-  a.href = url; a.download = `senior-schemes-data-${today}.csv`;
-  document.body.appendChild(a); a.click(); a.remove();
-  URL.revokeObjectURL(url);
-  toast('CSV downloaded.');
-}
-
-/* ============ FOLLOW-UPS ============ */
-function getFollowupEnrollments(){
-  return DB.enrollments.filter(e=>e.status==='interested_through_awareness');
-}
-
-function renderFollowups(){
-  const schemeFilter = document.getElementById('followupSchemeFilter');
-  if(!schemeFilter.dataset.built){
-    schemeFilter.innerHTML = `<option value="all">All schemes</option>` + SCHEMES.map(s=>`<option value="${s.id}">${esc(s.abbr)} — ${esc(s.name)}</option>`).join('');
-    schemeFilter.dataset.built = '1';
-    schemeFilter.addEventListener('change', renderFollowupList);
-    document.getElementById('followupStatusFilter').addEventListener('change', renderFollowupList);
-  }
-  const all = getFollowupEnrollments();
-  const open = all.filter(e=>!(DB.followups[e.id]||{}).resolved);
-  const resolved = all.filter(e=>(DB.followups[e.id]||{}).resolved);
-  document.getElementById('followupKpis').innerHTML = `
-    <div class="kpi"><div class="n" style="color:var(--marigold)">${all.length}</div><div class="l">Total interested (all-time)</div></div>
-    <div class="kpi"><div class="n" style="color:var(--red)">${open.length}</div><div class="l">Still open</div></div>
-    <div class="kpi"><div class="n" style="color:var(--teal)">${resolved.length}</div><div class="l">Resolved</div></div>
-  `;
-  renderFollowupList();
+    activeSchemes.length === 0 ? h("div", { className: "panel empty-state" }, h("div", { className: "glyph" }, "📣"), "No scheme selected yet. Choose one or more schemes above to start tracking an awareness campaign.") :
+    activeSchemes.map(s => {
+      const { c, people } = statsForScheme(s.id);
+      const total = Object.values(c).reduce((a, b) => a + b, 0);
+      return h("div", { key: s.id, className: "panel" },
+        h("div", { className: "panel-title" }, s.id + ". " + s.name),
+        s.note && h("div", { className: "panel-sub" }, "(" + s.note + ")"),
+        h("div", { className: "summary-grid" },
+          STATUS_OPTIONS.map(opt => h("div", { key: opt.key, className: "summary-card sc-" + opt.key },
+            h("div", { className: "num" }, c[opt.key]), h("div", { className: "lbl" }, opt.label)))
+        ),
+        h("div", { className: "panel-sub" }, total + " total responses recorded for this scheme so far."),
+        people.length > 0 && h("div", { className: "section-gap" },
+          h("div", { style: { fontSize: 12.5, fontWeight: 700, color: "var(--navy-900)", marginBottom: 8 } }, "Reached through awareness (" + people.length + ")"),
+          h("div", { className: "table-wrap" },
+            h("table", null,
+              h("thead", null, h("tr", null, h("th", null, "Name"), h("th", null, "Mobile"), h("th", null, "Location"), h("th", null, "Status"))),
+              h("tbody", null,
+                people.map(bid => {
+                  const b = beneficiaryById[bid]; if (!b) return null;
+                  const st = enrollments[bid][s.id];
+                  return h("tr", { key: bid },
+                    h("td", null, b.name), h("td", { className: "mono" }, b.mobile), h("td", null, b.location),
+                    h("td", null, h("span", { className: "badge badge-" + st }, STATUS_LABEL[st])));
+                })
+              )
+            )
+          )
+        )
+      );
+    })
+  );
 }
 
-function renderFollowupList(){
-  const schemeVal = document.getElementById('followupSchemeFilter').value;
-  const statusVal = document.getElementById('followupStatusFilter').value;
-  let list = getFollowupEnrollments();
-  if(schemeVal && schemeVal!=='all') list = list.filter(e=>String(e.schemeId)===String(schemeVal));
-  if(statusVal==='open') list = list.filter(e=>!(DB.followups[e.id]||{}).resolved);
-  if(statusVal==='resolved') list = list.filter(e=>(DB.followups[e.id]||{}).resolved);
-  list = list.slice().sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+/* ---------------- Follow-Up ---------------- */
+const FU_STATUS = [
+  { key: "pending", label: "Pending", color: "#c2660c" },
+  { key: "contacted", label: "Contacted", color: "#2563eb" },
+  { key: "converted", label: "Converted / Enrolled", color: "#15803d" },
+  { key: "not_needed", label: "No Longer Needed", color: "#57606f" },
+];
 
-  const wrap = document.getElementById('followupList');
-  if(!list.length){
-    wrap.innerHTML = `<div class="card empty-state">No follow-ups match this filter.</div>`;
-    return;
-  }
-  wrap.innerHTML = list.map(e=>{
-    const b = DB.beneficiaries.find(x=>x.id===e.beneficiaryId);
-    if(!b) return '';
-    const fu = DB.followups[e.id] || {notes:[], resolved:false, resolvedAs:null};
-    return `
-      <div class="card" style="padding:18px 20px;margin-bottom:12px;">
-        <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
-          <div>
-            <strong>${esc(b.name)}</strong> <span class="mono" style="color:var(--ink-soft);font-size:12.5px;">${esc(b.mobile)}</span>
-            <div style="font-size:12.5px;color:var(--ink-soft);">${esc(b.location)} · interested in <strong>${esc(e.schemeName)}</strong></div>
-          </div>
-          <span class="pill ${fu.resolved ? 'pill-already_enrolled' : 'pill-interested_through_awareness'}">${fu.resolved ? ('Resolved — ' + (fu.resolvedAs||'')) : 'Open'}</span>
-        </div>
-        ${fu.notes.length ? `<div class="mini-grid" style="margin-bottom:10px;">${fu.notes.map(n=>`<div class="mini-item" style="display:block;"><div style="font-size:11px;color:var(--ink-soft);">${fmtDate(n.date)}</div>${esc(n.text)}</div>`).join('')}</div>` : ''}
-        ${!fu.resolved ? `
-          <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <input class="input" style="flex:1;min-width:200px;" placeholder="Add a follow-up note…" id="note_${e.id}">
-            <button class="btn btn-outline btn-sm" data-add-note="${e.id}">Add note</button>
-            <button class="btn btn-teal btn-sm" data-resolve="${e.id}" data-as="enrolled">Mark enrolled</button>
-            <button class="btn btn-outline btn-sm" data-resolve="${e.id}" data-as="not interested">Mark not interested</button>
-          </div>
-        ` : `<button class="btn btn-ghost btn-sm" data-reopen="${e.id}">Reopen follow-up</button>`}
-      </div>
-    `;
-  }).join('');
+function FollowUp({ beneficiaries, enrollments, followups, setFollowups, showToast }) {
+  const [filter, setFilter] = useState("pending");
+  const beneficiaryById = useMemo(() => Object.fromEntries(beneficiaries.map(b => [b.id, b])), [beneficiaries]);
 
-  wrap.querySelectorAll('[data-add-note]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const id = btn.dataset.addNote;
-      const input = document.getElementById('note_'+id);
-      const text = input.value.trim();
-      if(!text){ toast('Write a note first.', true); return; }
-      DB.followups[id] = DB.followups[id] || {notes:[], resolved:false, resolvedAs:null};
-      DB.followups[id].notes.push({date:new Date().toISOString(), text});
-      saveDB();
-      renderFollowupList();
-      toast('Note added.');
-    });
-  });
-  wrap.querySelectorAll('[data-resolve]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const id = btn.dataset.resolve;
-      DB.followups[id] = DB.followups[id] || {notes:[], resolved:false, resolvedAs:null};
-      DB.followups[id].resolved = true;
-      DB.followups[id].resolvedAs = btn.dataset.as;
-      saveDB();
-      renderFollowups();
-      toast('Follow-up marked resolved.');
-    });
-  });
-  wrap.querySelectorAll('[data-reopen]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const id = btn.dataset.reopen;
-      DB.followups[id].resolved = false;
-      DB.followups[id].resolvedAs = null;
-      saveDB();
-      renderFollowups();
-    });
-  });
-}
-
-/* ============ AWARENESS CAMPAIGN ============ */
-function renderCampaign(){
-  const sel = document.getElementById('campaignSchemeSelect');
-  if(!sel.dataset.built){
-    sel.innerHTML = SCHEMES.map(s=>`<option value="${s.id}">${esc(s.abbr)} — ${esc(s.name)}</option>`).join('');
-    sel.dataset.built = '1';
-    sel.addEventListener('change', ()=>{
-      DB.campaignSchemeId = parseInt(sel.value,10);
-      saveDB();
-      renderCampaignBody();
-    });
-  }
-  sel.value = DB.campaignSchemeId;
-  renderCampaignBody();
-}
-
-function renderCampaignBody(){
-  const schemeId = DB.campaignSchemeId;
-  const scheme = SCHEMES.find(s=>s.id===schemeId);
-  const rows = DB.enrollments.filter(e=>e.schemeId===schemeId);
-  const counts = {};
-  STATUS_ORDER.forEach(st=>counts[st]=rows.filter(r=>r.status===st).length);
-
-  const body = document.getElementById('campaignBody');
-  if(!rows.length){
-    body.innerHTML = `<div class="card empty-state">No responses recorded yet for <strong>${esc(scheme.name)}</strong>. Collect some data first, then come back here to track this campaign.</div>`;
-    return;
-  }
-
-  body.innerHTML = `
-    <div class="kpi-row">
-      <div class="kpi"><div class="n">${rows.length}</div><div class="l">Total contacted for this scheme</div></div>
-      <div class="kpi"><div class="n" style="color:var(--blue)">${counts.enrolled_through_awareness}</div><div class="l">Enrolled through awareness</div></div>
-      <div class="kpi"><div class="n" style="color:var(--teal)">${counts.already_enrolled}</div><div class="l">Already enrolled</div></div>
-      <div class="kpi"><div class="n" style="color:var(--marigold)">${counts.interested_through_awareness}</div><div class="l">Interested, follow up</div></div>
-      <div class="kpi"><div class="n" style="color:var(--red)">${counts.not_interested}</div><div class="l">Not interested</div></div>
-    </div>
-    <div class="card" style="overflow-x:auto;">
-      <table class="data-table">
-        <thead><tr><th>Name</th><th>Mobile</th><th>Location</th><th>Status for ${esc(scheme.abbr)}</th><th>Date</th></tr></thead>
-        <tbody>
-          ${rows.slice().sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).map(e=>{
-            const b = DB.beneficiaries.find(x=>x.id===e.beneficiaryId);
-            if(!b) return '';
-            return `<tr>
-              <td><strong>${esc(b.name)}</strong></td>
-              <td class="mono">${esc(b.mobile)}</td>
-              <td>${esc(b.location)}</td>
-              <td><span class="pill pill-${e.status}">${STATUS_META[e.status].short}</span></td>
-              <td>${fmtDate(e.createdAt)}</td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table>
-    </div>
-  `;
-}
-
-/* ============ MANAGE ============ */
-let selectedBenIds = new Set();
-
-function renderManage(){
-  selectedBenIds.clear();
-  document.getElementById('manageTotalCount').textContent = DB.beneficiaries.length;
-  const table = document.getElementById('manageTable');
-  const list = DB.beneficiaries.slice().sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
-  if(!list.length){
-    table.innerHTML = `<tbody><tr><td style="padding:30px;text-align:center;color:var(--ink-soft);">No records to manage.</td></tr></tbody>`;
-  } else {
-    table.innerHTML = `
-      <thead><tr><th></th><th>Name</th><th>Mobile</th><th>Location</th><th>Date Added</th><th></th></tr></thead>
-      <tbody>
-        ${list.map(b=>`
-          <tr>
-            <td><input type="checkbox" class="row-check" data-ben="${b.id}"></td>
-            <td><strong>${esc(b.name)}</strong></td>
-            <td class="mono">${esc(b.mobile)}</td>
-            <td>${esc(b.location)}</td>
-            <td>${fmtDate(b.createdAt)}</td>
-            <td><button class="btn btn-outline btn-sm" data-del-one="${b.id}">Delete</button></td>
-          </tr>
-        `).join('')}
-      </tbody>
-    `;
-  }
-  updateSelCount();
-
-  table.querySelectorAll('.row-check').forEach(cb=>{
-    cb.addEventListener('change', ()=>{
-      if(cb.checked) selectedBenIds.add(cb.dataset.ben); else selectedBenIds.delete(cb.dataset.ben);
-      updateSelCount();
-    });
-  });
-  table.querySelectorAll('[data-del-one]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const id = btn.dataset.delOne;
-      const b = DB.beneficiaries.find(x=>x.id===id);
-      showModal({
-        title:'Delete this record?',
-        body:`This removes <strong>${esc(b.name)}</strong> and all 13 of their scheme statuses. This can't be undone.`,
-        confirmLabel:'Delete',
-        danger:true,
-        onConfirm:()=>{
-          deleteBeneficiaries([id]);
-          toast('Record deleted.');
+  const list = useMemo(() => {
+    const items = [];
+    Object.entries(enrollments).forEach(([bid, st]) => {
+      SCHEMES.forEach(s => {
+        if (st && st[s.id] === "interested_through_awareness") {
+          const fk = "followup:" + bid + ":" + s.id;
+          const fu = followups[fk] || { beneficiaryId: bid, schemeId: s.id, status: "pending", notes: "" };
+          items.push({ key: fk, beneficiary: beneficiaryById[bid], scheme: s, fu });
         }
       });
     });
-  });
+    return items.filter(it => it.beneficiary);
+  }, [enrollments, followups, beneficiaryById]);
+
+  const filtered = filter === "all" ? list : list.filter(it => it.fu.status === filter);
+
+  const updateFollowup = async (key, patch) => {
+    const existing = followups[key] || {};
+    const next = { ...existing, ...patch, updatedAt: new Date().toISOString() };
+    setFollowups(f => ({ ...f, [key]: next }));
+    await storeSet(key, JSON.stringify(next), true);
+  };
+
+  const counts = useMemo(() => {
+    const c = { pending: 0, contacted: 0, converted: 0, not_needed: 0 };
+    list.forEach(it => { c[it.fu.status] = (c[it.fu.status] || 0) + 1; });
+    return c;
+  }, [list]);
+
+  return h("div", null,
+    h("div", { className: "summary-grid" },
+      h("div", { className: "summary-card sc-total" }, h("div", { className: "num" }, list.length), h("div", { className: "lbl" }, "Total Interested (via Awareness)")),
+      FU_STATUS.map(fs => h("div", { key: fs.key, className: "summary-card" },
+        h("div", { className: "num", style: { color: fs.color } }, counts[fs.key] || 0), h("div", { className: "lbl" }, fs.label)))
+    ),
+    h("div", { className: "panel" },
+      h("div", { className: "flex-between" },
+        h("div", null, h("div", { className: "panel-title" }, "Follow-Up Queue"), h("div", { className: "panel-sub" }, "Beneficiaries who showed interest through the awareness campaign and haven't been formally enrolled yet.")),
+        h("div", { style: { display: "flex", gap: 6, flexWrap: "wrap" } },
+          ["all", ...FU_STATUS.map(f => f.key)].map(k => h("button", {
+            key: k, className: "chip" + (filter === k ? " on" : ""), onClick: () => setFilter(k)
+          }, k === "all" ? "All" : FU_STATUS.find(f => f.key === k).label))
+        )
+      ),
+      filtered.length === 0 ? h("div", { className: "empty-state" }, h("div", { className: "glyph" }, "📞"), "No follow-ups in this filter.") :
+      filtered.map(it => h("div", { key: it.key, className: "fu-card" },
+        h("div", { className: "flex-between" },
+          h("div", null,
+            h("strong", null, it.beneficiary.name), " · ", h("span", { className: "mono" }, it.beneficiary.mobile), " · ", it.beneficiary.location,
+            h("div", { style: { fontSize: 12.5, color: "var(--ink-dim)", marginTop: 3 } }, "Scheme: " + it.scheme.id + ". " + it.scheme.name)
+          ),
+          h("div", { style: { display: "flex", gap: 6, flexWrap: "wrap" } },
+            FU_STATUS.map(fs => h("button", {
+              key: fs.key,
+              className: "btn btn-sm " + (it.fu.status === fs.key ? "btn-primary" : "btn-outline"),
+              onClick: () => updateFollowup(it.key, { status: fs.key })
+            }, fs.label))
+          )
+        ),
+        h("div", { style: { marginTop: 10 } },
+          h("textarea", {
+            rows: 2, placeholder: "Follow-up notes (e.g. visit date, what was discussed)…",
+            defaultValue: it.fu.notes || "",
+            onBlur: (e) => { if (e.target.value !== it.fu.notes) { updateFollowup(it.key, { notes: e.target.value }); showToast("Note saved."); } }
+          })
+        )
+      ))
+    )
+  );
 }
 
-function updateSelCount(){
-  document.getElementById('selCount').textContent = selectedBenIds.size;
-  document.getElementById('deleteSelectedBtn').disabled = selectedBenIds.size === 0;
+/* ---------------- Manage Data ---------------- */
+function ManageData({ beneficiaries, refreshAll, showToast }) {
+  const [selected, setSelected] = useState({});
+  const [confirmType, setConfirmType] = useState(null); // 'selected' | 'all'
+  const [confirmText, setConfirmText] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const toggle = (id) => setSelected(s => ({ ...s, [id]: !s[id] }));
+  const selectedIds = Object.keys(selected).filter(id => selected[id]);
+
+  const deleteBeneficiaryFully = async (id) => {
+    await storeDelete("beneficiary:" + id, true);
+    await storeDelete("enrollment:" + id, true);
+    const fuKeys = await storeListKeys("followup:" + id + ":", true);
+    for (const k of fuKeys) await storeDelete(k, true);
+  };
+
+  const deleteOne = async (id) => {
+    setBusy(true);
+    await deleteBeneficiaryFully(id);
+    setBusy(false);
+    await refreshAll();
+    showToast("Record deleted.");
+  };
+
+  const deleteSelected = async () => {
+    setBusy(true);
+    for (const id of selectedIds) await deleteBeneficiaryFully(id);
+    setBusy(false);
+    setSelected({});
+    setConfirmType(null);
+    await refreshAll();
+    showToast(selectedIds.length + " record(s) deleted.");
+  };
+
+  const deleteAll = async () => {
+    setBusy(true);
+    for (const b of beneficiaries) await deleteBeneficiaryFully(b.id);
+    const campKeys = await storeListKeys("campaign:", true);
+    for (const k of campKeys) await storeDelete(k, true);
+    setBusy(false);
+    setConfirmType(null);
+    setConfirmText("");
+    await refreshAll();
+    showToast("All data deleted.");
+  };
+
+  const downloadCSVBeforeDelete = async () => {
+    const enrollments = await loadEnrollments();
+    const headers = ["Name", "Mobile Number", "Age", "Location", "Gender", "Date Added", ...SCHEMES.map(s => s.name)];
+    const rows = beneficiaries.map(b => {
+      const st = enrollments[b.id] || {};
+      const schemeCols = SCHEMES.map(s => STATUS_LABEL[st[s.id]] || "Not Recorded");
+      return [b.name, b.mobile, b.age, b.location, b.gender || "", new Date(b.createdAt).toLocaleDateString(), ...schemeCols];
+    });
+    const csv = [headers, ...rows].map(r => r.map(cell => '"' + String(cell).replace(/"/g, '""') + '"').join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "senior-schemes-backup-" + new Date().toISOString().slice(0, 10) + ".csv";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  return h("div", null,
+    h("div", { className: "panel", style: { display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 14 } },
+      h("div", null,
+        h("div", { className: "panel-sub" }, "Total records"),
+        h("div", { style: { fontSize: 30, fontWeight: 800, color: "var(--navy-900)" } }, beneficiaries.length)
+      ),
+      h("div", { style: { display: "flex", gap: 10, flexWrap: "wrap" } },
+        h("button", { className: "btn btn-outline", onClick: downloadCSVBeforeDelete, disabled: beneficiaries.length === 0 }, "⬇ Export Backup CSV"),
+        h("button", { className: "btn btn-outline", disabled: selectedIds.length === 0, onClick: () => setConfirmType("selected") }, "Delete Selected (" + selectedIds.length + ")"),
+        h("button", { className: "btn btn-danger", disabled: beneficiaries.length === 0, onClick: () => setConfirmType("all") }, "Delete All Data")
+      )
+    ),
+
+    h("div", { className: "panel" },
+      h("div", { className: "panel-title" }, "All Records"),
+      h("div", { className: "panel-sub" }, "This action is irreversible. Deleted beneficiaries, their scheme statuses, and any linked follow-ups are permanently removed."),
+      beneficiaries.length === 0 ? h("div", { className: "empty-state" }, h("div", { className: "glyph" }, "🗄"), "No records yet.") :
+      h("div", { className: "table-wrap" },
+        h("table", null,
+          h("thead", null, h("tr", null, h("th", null, ""), h("th", null, "Name"), h("th", null, "Mobile"), h("th", null, "Age"), h("th", null, "Location"), h("th", null, "Date Added"), h("th", null, "Actions"))),
+          h("tbody", null,
+            beneficiaries.map(b => h("tr", { key: b.id },
+              h("td", null, h("input", { type: "checkbox", checked: !!selected[b.id], onChange: () => toggle(b.id) })),
+              h("td", null, b.name), h("td", { className: "mono" }, b.mobile), h("td", null, b.age), h("td", null, b.location),
+              h("td", null, new Date(b.createdAt).toLocaleDateString()),
+              h("td", null, h("button", { className: "btn btn-sm btn-outline", disabled: busy, onClick: () => deleteOne(b.id) }, "Delete"))
+            ))
+          )
+        )
+      )
+    ),
+
+    confirmType && h("div", { className: "confirm-overlay" },
+      h("div", { className: "confirm-box" },
+        h("h3", null, confirmType === "all" ? "Delete ALL data?" : "Delete selected records?"),
+        h("p", null, confirmType === "all"
+          ? "This will permanently erase every beneficiary, their scheme statuses, follow-ups, and the active campaign selection. Type DELETE below to confirm."
+          : "This will permanently delete " + selectedIds.length + " record(s) and their scheme statuses. This cannot be undone."),
+        confirmType === "all" && h("input", { placeholder: 'Type "DELETE" to confirm', value: confirmText, onChange: e => setConfirmText(e.target.value) }),
+        h("div", { className: "confirm-actions" },
+          h("button", { className: "btn btn-outline", onClick: () => { setConfirmType(null); setConfirmText(""); } }, "Cancel"),
+          h("button", {
+            className: "btn btn-danger",
+            disabled: busy || (confirmType === "all" && confirmText.trim().toUpperCase() !== "DELETE"),
+            onClick: () => confirmType === "all" ? deleteAll() : deleteSelected()
+          }, busy ? "Deleting…" : "Confirm Delete")
+        )
+      )
+    )
+  );
 }
 
-function deleteBeneficiaries(ids){
-  const idSet = new Set(ids);
-  DB.beneficiaries = DB.beneficiaries.filter(b=>!idSet.has(b.id));
-  const removedEnrollmentIds = new Set(DB.enrollments.filter(e=>idSet.has(e.beneficiaryId)).map(e=>e.id));
-  DB.enrollments = DB.enrollments.filter(e=>!idSet.has(e.beneficiaryId));
-  removedEnrollmentIds.forEach(id=>delete DB.followups[id]);
-  saveDB();
-  renderManage();
-}
-
-document.getElementById('deleteSelectedBtn').addEventListener('click', ()=>{
-  const ids = Array.from(selectedBenIds);
-  if(!ids.length) return;
-  showModal({
-    title:`Delete ${ids.length} selected record${ids.length>1?'s':''}?`,
-    body:`This removes ${ids.length} beneficiar${ids.length>1?'ies':'y'} and all their scheme statuses. This can't be undone.`,
-    confirmLabel:'Delete selected',
-    danger:true,
-    onConfirm:()=>{
-      deleteBeneficiaries(ids);
-      toast('Selected records deleted.');
-    }
-  });
-});
-
-document.getElementById('deleteAllBtn').addEventListener('click', ()=>{
-  if(!DB.beneficiaries.length){ toast('There is no data to delete.', true); return; }
-  showModal({
-    title:'Delete ALL data?',
-    body:`This permanently erases all ${DB.beneficiaries.length} beneficiary records and every scheme status collected. This action is irreversible. Consider exporting a CSV backup first.`,
-    confirmLabel:'Delete everything',
-    danger:true,
-    requireTypeDelete:true,
-    onConfirm:()=>{
-      DB.beneficiaries = [];
-      DB.enrollments = [];
-      DB.followups = {};
-      saveDB();
-      renderManage();
-      toast('All data deleted.');
-    }
-  });
-});
-
-/* ============ INIT ============ */
-resetCollectFlow();
-const initialView = (window.location.hash||'').replace('#','') || 'home';
-goto(VIEWS.includes(initialView) ? initialView : 'home');
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(h(App));
 </script>
 </body>
 </html>
